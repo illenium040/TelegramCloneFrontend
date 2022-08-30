@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll";
-import { UsersChat } from '../models/chat';
+import { UserChatList } from '../models/user';
+import { ChatModel } from '../models/chat';
 
 type SidebarChatListProps = {
-    chats?: UsersChat[];
-    onUserSelected: (user: UsersChat) => void;
+    userChatList?: UserChatList;
+    onChatSelected: (chat: ChatModel) => void;
 }
 
 
 export default class SidebarChatList extends Component<SidebarChatListProps>{
-
-    private _selectedUser?: UsersChat;
 
     getCurrentDate(separator = '', d: Date) {
         let date = d.getDate();
@@ -25,19 +24,22 @@ export default class SidebarChatList extends Component<SidebarChatListProps>{
                 <div className='chat-list-search'>
                     <input placeholder='Поиск...' type="text" />
                 </div>
-                {this.props.chats?.map((x, i) =>
-                    <div key={i} className='group chat-user' tabIndex={i} onClick={() => this.props.onUserSelected(x)}>
+                {this.props.userChatList?.chatList?.map((x, i) =>
+                    <div key={i} className='group chat-user' tabIndex={i} onClick={() => {
+                        this.props.onChatSelected(x);
+                    }
+                    }>
                         <span className='row-span-2 max-w-[80]'>
-                            <img className='chat-image' src={x.user.avatar} alt="" />
+                            <img className='chat-image' src={x.userDTO.avatar} alt="" />
                         </span>
-                        <span className='col-span-2 group-focus:text-white font-semibold text-lg'>{x.user.name}</span>
+                        <span className='col-span-2 group-focus:text-white font-semibold text-lg'>{x.userDTO.name}</span>
                         <span className='text-center text-side-gray flex flex-row group-focus:text-white text-sm items-center justify-center'>
                             <span className='flex justify-center items-center m-1 group-focus:text-white text-green-400'>
                                 <BsCheckAll />
                             </span>
-                            {this.getCurrentDate('.', x.messages?.at(x.messages?.length - 1)?.date!)}
+                            {this.getCurrentDate('.', x.userDTO.messages?.at(x.userDTO.messages?.length - 1)?.date!)}
                         </span>
-                        <span className='col-span-2 text-default-gray group-focus:text-white'>{x.messages?.at(x.messages?.length - 1)?.content}</span>
+                        <span className='col-span-2 text-default-gray group-focus:text-white'>{x.userDTO.messages?.at(x.userDTO.messages?.length - 1)?.content}</span>
                         <span className='flex justify-center items-center rounded-xl min-w-min text-white'>
                             <p className='
                     group-focus:text-white

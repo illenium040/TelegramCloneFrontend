@@ -1,119 +1,36 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import React, { Component } from 'react'
-import Chat from './chat';
+import ChatComponent from './chat';
 import SidebarChatList from './sidebar-chat-list';
-import { UsersChat, User } from '../models/chat';
+import { UserChatDTO, UserChatList, UserDTO } from '../models/user';
+import { UserService } from "../services/user-service";
+import { ChatModel } from "../models/chat";
 
-export default class ChatFacade extends Component<{}, { selectedUser?: UsersChat }> {
+export default class ChatFacade extends Component<{ user: UserDTO }, { selectedChat?: ChatModel }> {
 
-    private currentUser: User;
     private _connection?: HubConnection;
-    constructor() {
-        super({});
-        this.state = { selectedUser: undefined };
-        if (window.location.href === "http://localhost:3000/") {
-            this.currentUser = this.createUser1();
-        }
-        else {
-            this.currentUser = this.createUser2();
-        }
-    }
-    async componentDidMount() {
-        if (!this._connection) {
-            this._connection = new HubConnectionBuilder()
-                .withUrl("https://localhost:7014/hubs/notifications")
-                .withAutomaticReconnect()
-                .build();
-            await this._connection.start()
-                .then(() => console.log('Connection started!'))
-                .then(() => {
-                    this._connection?.invoke('getconnectionid')
-                        .then((data) => {
-                            console.log(data);
-                        });
-                })
-                .catch(err => console.log('Error while establishing connection :('));
-            this._connection.on('ReceiveMessage', (receivedMessage: string) => {
-                this.currentUser.chats?.at(0)?.myMessages?.push({
-                    content: receivedMessage,
-                    date: new Date(),
-                    isRead: true
-                })
-            });
-        }
+    private _userService: UserService;
+
+    constructor(user: UserChatDTO) {
+        super({ user });
+        this.state = { selectedChat: undefined };
+        this._userService = new UserService();
+        //if (window.location.href === "http://localhost:3000/")
     }
 
-    private createUser1(): User {
-        return {
-            name: "Давыда",
-            avatar: process.env.PUBLIC_URL + "images/davida.jpg",
-            chats: [{
-                user: {
-                    name: "Гигачад",
-                    avatar: process.env.PUBLIC_URL + "images/davida.jpg",
-                },
-                messages: [
-                    {
-                        content: "Здарова чмо)0",
-                        date: new Date(),
-                        isRead: true
-                    }
-                ],
-                myMessages: [
-                    {
-                        content: "Da",
-                        date: new Date(),
-                        isRead: true
-                    }
-                ]
-            }]
-        } as User;
-    }
-    private createUser2(): User {
-        return {
-            name: "Гигачад",
-            avatar: process.env.PUBLIC_URL + "images/davida.jpg",
-            chats: [{
-                user: {
-                    name: "Давыда",
-                    avatar: process.env.PUBLIC_URL + "images/davida.jpg",
-                },
-                messages: [
-                    {
-                        content: "Da",
-                        date: new Date(),
-                        isRead: true
-                    }
-                ],
-                myMessages: [
-                    {
-                        content: "Здарова чмо)0",
-                        date: new Date(),
-                        isRead: true
-                    }
-                ]
-            }]
-        } as User;
-    }
-
-    async sendMessage(msg: string) {
-        await this._connection?.send("SendMessage", msg);
-    }
-
-
-    private async onUserSelected(u: UsersChat) {
+    private async onChatSelected(u: ChatModel) {
         console.log(u);
-        this.setState({ selectedUser: u });
+        this.setState({ selectedChat: u });
     }
 
     render() {
         return (
             <React.Fragment>
-                <SidebarChatList chats={this.currentUser.chats} onUserSelected={this.onUserSelected.bind(this)} />
-                {this.state.selectedUser !== undefined ?
-                    <Chat userFrom={this.currentUser}
-                        userTo={this.state.selectedUser}
-                        onMessageSend={this.sendMessage.bind(this)} />
+                <SidebarChatList
+                    userChatList={this._userService.getUserChatList(this.props.user.id)}
+                    onChatSelected={this.onChatSelected.bind(this)} />
+                {this.state.selectedChat !== undefined ?
+                    <ChatComponent chat={this.state.selectedChat} />
                     : <></>}
             </React.Fragment>
         )
