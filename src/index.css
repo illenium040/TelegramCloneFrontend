@@ -1,13 +1,146 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html{
+    font-family: 'Roboto';
+    font-size: 14px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.app{
+    background-image: url('./assets/images/bg.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+@layer utilities {
+  .border-gray {
+    @apply border-gray-200 border-[2px] p-2
+  }
+  .text-header-bold{
+    @apply font-semibold text-lg
+  }
+  .text-default-gray {
+    @apply text-side-gray text-sm font-normal
+  }
+}
+
+@media screen(lg) {
+  .my-chat-message{
+    @apply self-start
+  }
+}
+
+
+@layer components{
+    .sidebar-container{
+        @apply flex flex-row
+    }
+    .sidebar-ref{
+        @apply h-20 flex justify-center items-center text-base font-normal
+         dark:hover:bg-gray-700 
+         flex-col text-sidebar-ico
+         focus:bg-sidebar-focus
+         focus:text-sidebar-ico-focus
+    }
+    .sidebar-ico{
+        @apply w-8 h-8 text-sidebar-ico group-focus:text-sidebar-ico-focus
+    }
+
+    .chat-list-search{
+      @apply p-2 w-full h-[45px]
+    }
+    .chat-list-search input {
+      @apply w-full rounded-md bg-gray-200
+      p-2
+      focus:bg-white
+      focus:outline-sky-500
+    }
+
+    .chat-sidebar-list{
+        @apply w-3/12 h-screen bg-white min-w-[350px]
+        overflow-auto
+    }
+
+    .chat-user{
+        @apply hover:bg-side-chat-hover min-w-full
+        min-h-[80px] max-h-[80px]
+      focus:bg-sidebar-ico-focus focus:text-white
+        cursor-pointer
+        grid grid-cols-4 grid-rows-2 gap-4
+        p-4
+      }
+
+    .chat-image{
+        @apply w-[60px] h-[60px] rounded-full object-contain
+    }
+    .chat-sidebar:hover::-webkit-scrollbar-track{
+        @apply bg-side-chat-hover 
+    }
+    .chat-sidebar:hover::-webkit-scrollbar-thumb{
+        @apply bg-sidebar-ico
+    }
+    .chat-sidebar:hover::-webkit-scrollbar-thumb:hover{
+        @apply bg-sidebar-focus
+    }
+    .chat-scrollbar::-webkit-scrollbar {
+        @apply w-2 
+    }
+  .chat-scrollbar::-webkit-scrollbar-track {
+    @apply rounded-xl bg-transparent
+  }
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-xl bg-transparent
+  }
+
+
+  .chat {
+    @apply bg-transparent flex flex-col w-full;
+  }
+  .chat-header{
+    @apply self-start min-h-[60px] bg-white w-full p-4 
+    flex flex-row
+  }
+  .chat-body{
+    @apply h-full flex flex-col items-start p-2 justify-end
+  }
+  .chat-footer{
+    @apply self-end min-h-[40px] bg-white w-full
+    flex flex-row
+  }
+
+  .chat-footer-icon{
+    @apply rounded-full h-[40px] w-[40px] text-side-gray hover:text-sidebar-ico p-2 font-extralight cursor-pointer
+  }
+  .chat-header-icon{
+    @apply p-0 rounded-none w-[25px] h-[25px] m-2
+    text-side-gray hover:text-sidebar-ico
+    font-extralight cursor-pointer
+  }
+  .chat-input{
+    @apply text-gray-900 text-sm rounded-lg
+      block w-full p-2.5 outline-none 
+  }
+
+
+
+  .chat-message {
+    @apply flex flex-row items-end m-1
+  }
+
+  .chat-message-avatar img{
+    @apply rounded-full object-contain w-[40px] h-[40px]
+  }
+
+  .chat-message-text-container{
+    @apply bg-white p-2 rounded-md ml-2
+    flex
+  }
+  .my-chat-message{
+    @apply self-end
+  }
+  .my-chat-message .chat-message-text-container{
+    @apply bg-green-200
+  }
+
 }
