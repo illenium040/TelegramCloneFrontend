@@ -1,28 +1,28 @@
 
-export interface IObserver {
-    update: () => void;
+export interface IObserver<T> {
+    update: (data: T) => void;
 }
 
-export interface IObservable {
-    addObserver: (observer: IObserver) => void;
-    removeObserver: (observer: IObserver) => void;
-    notifyObservers: () => void;
+export interface IObservable<T> {
+    addObserver: (observer: IObserver<T>) => void;
+    removeObserver: (observer: IObserver<T>) => void;
+    notifyObservers: (data: T) => void;
 }
 
 
-export class ObserverEvent implements IObservable {
+export class ObserverEvent<T> implements IObservable<T> {
 
-    private _obs: IObserver[] = [];
+    private _obs: IObserver<T>[] = [];
 
-    addObserver(observer: IObserver) {
+    addObserver(observer: IObserver<T>) {
         this._obs.push(observer);
     }
-    removeObserver(observer: IObserver) {
+    removeObserver(observer: IObserver<T>) {
 
     }
-    notifyObservers() {
+    notifyObservers(data: T) {
         this._obs.forEach((x, i) => {
-            x.update();
+            x.update(data);
         });
     }
 

@@ -1,55 +1,71 @@
 import React, { Component } from 'react'
 import { FiPaperclip } from "@react-icons/all-files/fi/FiPaperclip";
 import { VscSmiley } from "@react-icons/all-files/vsc/VscSmiley";
-import { ChatBuilder, Chat, ChatModel, Message } from '../models/chat';
 
 import { BsSearch } from "@react-icons/all-files/bs/BsSearch";
 import { BsReverseLayoutSidebarReverse } from "@react-icons/all-files/bs/BsReverseLayoutSidebarReverse";
 import { BsThreeDotsVertical } from "@react-icons/all-files/bs/BsThreeDotsVertical";
 import { IObserver } from '../extensions/observer-pattern';
+import { ChatService } from '../services/chat-service';
+import { MessageDTO } from '../models/message-models';
+import { ChatDTO } from '../models/chat-models';
+import { UserDTO } from '../models/user-models';
 
 type ChatProps = {
-    chat: ChatModel;
+    chat: ChatDTO;
+    currentUser: UserDTO;
+    targetUser: UserDTO;
+    chatService: ChatService;
 }
 
-export default class ChatComponent extends Component<ChatProps, { messages?: Message[] }> implements IObserver {
+class ChatObserver implements IObserver<MessageDTO>{
+
+    private _update;
+    constructor(update: (data: MessageDTO) => void) {
+        this._update = update;
+    }
+    public update(data: MessageDTO) {
+        this._update(data);
+    }
+
+}
+
+export default class ChatComponent extends Component<ChatProps, { messages?: MessageDTO[] }>{
     private _inpValue: string;
-    private _chat?: Chat;
+    private _onReceive: ChatObserver;
+    private _onSended: ChatObserver;
 
     constructor(props: ChatProps) {
         super(props);
-        this.state = {
-            messages: Array.prototype.concat(this.props.chat.myDTO.messages, this.props.chat.userDTO.messages)
-        };
+        this._onReceive = new ChatObserver(this.onReceive);
+        this._onSended = new ChatObserver(this.onSended);
+        this.props.chatService.OnReceive.addObserver(this._onReceive);
+        this.props.chatService.OnSended.addObserver(this._onSended);
+        this.state = { messages: this.props.chat.messages };
         this._inpValue = "";
     }
 
     private onEnterKeyDown(e: React.KeyboardEvent) {
         if (e.key === "Enter") {
-            let msg = {
-                userId: this.props.chat.myDTO.id,
+            this.props.chatService.sendMessageDTO({
+                chatId: this.props.chat.id,
                 content: this._inpValue,
-                date: new Date(),
-                isRead: false
-            };
-            this._chat?.sendMessage(msg).then(x => {
-                this.state.messages?.push(msg)
-                this.setState({ messages: this.state.messages })
+                userIdFrom: this.props.currentUser.id,
+                userIdTo: this.props.targetUser.id
             });
         }
     }
 
-    async componentDidMount() {
-        if (this._chat) return;
-        this._chat = await (new ChatBuilder()
-            .addModel(this.props.chat)
-            .addSignalRConnection()
-            .build())
-        this._chat.OnReceive.addObserver(this);
+    private onReceive(data: MessageDTO) {
+        this.state.messages?.push(data);
+        this.setState({ messages: this.state.messages });
+        console.log(`Receive new message from ${data.userIdFrom}`);
     }
 
-    public update() {
-        console.log("Chat updated!");
+    private onSended(data: MessageDTO) {
+        this.state.messages?.push(data);
+        this.setState({ messages: this.state.messages });
+        console.log(`Receive new message from ${data.userIdFrom}`);
     }
 
     render() {
@@ -57,7 +73,7 @@ export default class ChatComponent extends Component<ChatProps, { messages?: Mes
             <div className='chat'>
                 <div className='chat-header border-gray text-header-bold'>
                     <div className='flex flex-col w-full'>
-                        <span>{this.props.chat.userDTO.name}</span>
+                        <span>{this.props.targetUser.name}</span>
                         <span className='text-default-gray'>{"Был(а) недавно"}</span>
                     </div>
                     <div className='self-end flex flex-row items-center'>
@@ -68,10 +84,10 @@ export default class ChatComponent extends Component<ChatProps, { messages?: Mes
                 </div>
                 <div className='chat-body'>
                     {this.state.messages?.map((x, i) => {
-                        return x.userId === this.props.chat.myDTO.id ?
-                            <div className='chat-message my-chat-message'>
+                        return x.userIdFrom === this.props.currentUser.id ?
+                            <div key={x.id} className='chat-message my-chat-message'>
                                 <span className='chat-message-avatar'>
-                                    <img src={this.props.chat.myDTO.avatar} alt="" />
+                                    <img src={this.props.currentUser.avatar} alt="" />
                                 </span>
                                 <div className='chat-message-text-container'>
                                     <p className='text-black'>{x.content}</p>
@@ -79,9 +95,9 @@ export default class ChatComponent extends Component<ChatProps, { messages?: Mes
                                 </div>
                             </div>
                             :
-                            <div className='chat-message'>
+                            <div key={x.id} className='chat-message'>
                                 <span className='chat-message-avatar'>
-                                    <img src={this.props.chat.userDTO.avatar} alt="" />
+                                    <img src={this.props.targetUser.avatar} alt="" />
                                 </span>
                                 <div className='chat-message-text-container'>
                                     <p className='text-black'>{x.content}</p>

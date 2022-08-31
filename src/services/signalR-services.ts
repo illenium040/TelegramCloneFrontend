@@ -1,31 +1,59 @@
+import { MessageToServer } from './../models/message-models';
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-
+import { serverHost } from '../extensions/axios-extensions';
 
 export class SignalRService {
 
-    private _hub?: HubConnection;
-    private _connectionId?: string;
+    private static _signalInstance: SignalRService;
+    public static getInstanceOf() {
+        if (!this._signalInstance)
+            this._signalInstance = new SignalRService();
+        return SignalRService._signalInstance;
+    }
 
-    public async startConnection() {
+    private _hub?: HubConnection;
+    private _userId?: string
+    private constructor() { }
+
+    public async init(userId: string) {
+        await SignalRService.getInstanceOf().startConnection(userId)
+            .catch(err => console.log('Error while establishing connection :('));
+        await SignalRService.getInstanceOf().setHub()
+            .then(x => console.log("Hub is set"));
+    }
+
+    public OnMessageReceive(callback: (...arg0: any[]) => void) {
+        this._hub?.on("ReceiveMessage", callback)
+    }
+
+    public OnMessageSended(callback: (...arg0: any[]) => void) {
+        this._hub?.on("MessageSended", callback)
+    }
+
+    public async sendMessage(message: MessageToServer) {
+        this._hub?.send("SendMessage", message);
+    }
+
+    private async startConnection(userId: string) {
+        this._userId = userId;
         this._hub = new HubConnectionBuilder()
-            .withUrl("https://localhost:7014/hubs/notifications")
+            .withUrl(serverHost + "/hubs/notifications")
+            .withAutomaticReconnect()
             .build();
         await this._hub.start()
             .then(() => console.log('Connection started'))
-            .then(() => this.getConnectionId())
             .catch(err => console.log('Error while starting connection: ' + err))
+        await this.setHub()
+            .then(x => console.log(`Hub is set for ${this._hub?.connectionId}!`));
+        this._hub.onclose(() => this.removeHub());
     }
 
-    private getConnectionId() {
-        this._hub?.invoke('getconnectionid')
-            .then((data) => {
-                console.log(data);
-                this._connectionId = data;
-            });
+    private async setHub() {
+        await this._hub?.send("SetUserHub", this._userId);
+    }
+    private async removeHub() {
+        await this._hub?.send("RemoveUserHub", this._userId);
     }
 
-    //tmp solution
-    get Hub() {
-        return this._hub;
-    }
+
 }

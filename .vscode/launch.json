@@ -1,0 +1,22 @@
+{
+    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "3000",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}\\main"
+        },
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "3001",
+            "url": "http://localhost:3001",
+            "webRoot": "${workspaceFolder}\\main"
+        }
+    ]
+}

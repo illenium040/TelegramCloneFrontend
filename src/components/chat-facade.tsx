@@ -1,36 +1,47 @@
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import React, { Component } from 'react'
-import ChatComponent from './chat';
+import ChatComponent from './chat-component';
 import SidebarChatList from './sidebar-chat-list';
-import { UserChatDTO, UserChatList, UserDTO } from '../models/user';
-import { UserService } from "../services/user-service";
-import { ChatModel } from "../models/chat";
+import { ChatService } from '../services/chat-service';
+import { UserDTO } from '../models/user-models';
+import { ChatDTO, ChatListUnit } from '../models/chat-models';
 
-export default class ChatFacade extends Component<{ user: UserDTO }, { selectedChat?: ChatModel }> {
+interface ChatFacadeState {
+    selectedChat?: ChatListUnit
+    chatMessages?: ChatDTO;
+}
 
-    private _connection?: HubConnection;
-    private _userService: UserService;
+export default class ChatFacade extends Component<{ user: UserDTO }, ChatFacadeState> {
 
-    constructor(user: UserChatDTO) {
+    private _chatService: ChatService;
+    constructor(user: UserDTO) {
         super({ user });
-        this.state = { selectedChat: undefined };
-        this._userService = new UserService();
-        //if (window.location.href === "http://localhost:3000/")
+        this.state = {
+            selectedChat: undefined,
+            chatMessages: undefined
+        };
+        this._chatService = new ChatService();
     }
 
-    private async onChatSelected(u: ChatModel) {
+    private onChatSelected(u: ChatListUnit) {
         console.log(u);
-        this.setState({ selectedChat: u });
+        this._chatService.getChatMessages(u.chatId)
+            .then(x => this.setState({ selectedChat: u, chatMessages: x }))
     }
 
     render() {
         return (
             <React.Fragment>
                 <SidebarChatList
-                    userChatList={this._userService.getUserChatList(this.props.user.id)}
+                    chatService={this._chatService}
+                    user={this.props.user}
                     onChatSelected={this.onChatSelected.bind(this)} />
-                {this.state.selectedChat !== undefined ?
-                    <ChatComponent chat={this.state.selectedChat} />
+                {this.state.selectedChat !== undefined &&
+                    this.state.chatMessages !== undefined ?
+                    <ChatComponent
+                        chatService={this._chatService}
+                        currentUser={this.props.user}
+                        targetUser={this.state.selectedChat.user}
+                        chat={this.state.chatMessages} />
                     : <></>}
             </React.Fragment>
         )
