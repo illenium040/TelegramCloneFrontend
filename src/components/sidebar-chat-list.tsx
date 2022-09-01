@@ -27,9 +27,15 @@ export default class SidebarChatList extends Component<SidebarChatListProps, Sid
             .then(x => this.setState({ chatList: x }))
     }
 
+    private getDateString(dbDate: Date) {
+        var date = new Date(dbDate);
+        return `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`;
+    }
+
     render() {
         return (
-            <aside className='group chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm'>
+            <aside className='group 
+            chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm'>
                 <div className='chat-list-search'>
                     <input placeholder='Поиск...' type="text" />
                 </div>
@@ -38,7 +44,7 @@ export default class SidebarChatList extends Component<SidebarChatListProps, Sid
                     <div key={i} className='group chat-user' tabIndex={i} onClick={() => {
                         this.props.onChatSelected(x);
                     }}>
-                        <span className='row-span-2 max-w-[80]'>
+                        <span className='row-span-2'>
                             <img className='chat-image' src={x.user.avatar} alt="" />
                         </span>
                         <span className='col-span-2 group-focus:text-white font-semibold text-lg'>{x.user.name}</span>
@@ -46,7 +52,7 @@ export default class SidebarChatList extends Component<SidebarChatListProps, Sid
                             <span className='flex justify-center items-center m-1 group-focus:text-white text-green-400'>
                                 <BsCheckAll />
                             </span>
-                            <p>{x.lastMessage.created.toString()}</p>
+                            <p>{this.getDateString(x.lastMessage.created)}</p>
                         </div>
                         <span className='col-span-2 text-default-gray group-focus:text-white'>{x.lastMessage.content}</span>
                         <span className='flex justify-center items-center rounded-xl min-w-min text-white'>

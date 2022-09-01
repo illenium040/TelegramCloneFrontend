@@ -18,8 +18,6 @@ export class SignalRService {
     public async init(userId: string) {
         await SignalRService.getInstanceOf().startConnection(userId)
             .catch(err => console.log('Error while establishing connection :('));
-        await SignalRService.getInstanceOf().setHub()
-            .then(x => console.log("Hub is set"));
     }
 
     public OnMessageReceive(callback: (...arg0: any[]) => void) {
@@ -45,14 +43,10 @@ export class SignalRService {
             .catch(err => console.log('Error while starting connection: ' + err))
         await this.setHub()
             .then(x => console.log(`Hub is set for ${this._hub?.connectionId}!`));
-        this._hub.onclose(() => this.removeHub());
     }
 
     private async setHub() {
         await this._hub?.send("SetUserHub", this._userId);
-    }
-    private async removeHub() {
-        await this._hub?.send("RemoveUserHub", this._userId);
     }
 
 

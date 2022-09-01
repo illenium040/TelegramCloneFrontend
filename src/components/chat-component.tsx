@@ -37,8 +37,8 @@ export default class ChatComponent extends Component<ChatProps, { messages?: Mes
 
     constructor(props: ChatProps) {
         super(props);
-        this._onReceive = new ChatObserver(this.onReceive);
-        this._onSended = new ChatObserver(this.onSended);
+        this._onReceive = new ChatObserver(this.onReceive.bind(this));
+        this._onSended = new ChatObserver(this.onSended.bind(this));
         this.props.chatService.OnReceive.addObserver(this._onReceive);
         this.props.chatService.OnSended.addObserver(this._onSended);
         this.state = { messages: this.props.chat.messages };
@@ -47,6 +47,7 @@ export default class ChatComponent extends Component<ChatProps, { messages?: Mes
 
     private onEnterKeyDown(e: React.KeyboardEvent) {
         if (e.key === "Enter") {
+            (e.target as HTMLInputElement).value = "";
             this.props.chatService.sendMessageDTO({
                 chatId: this.props.chat.id,
                 content: this._inpValue,

@@ -15,6 +15,10 @@ module.exports = {
         'side-chat-hover': '#F1F1F1',
         'side-gray': '#BBBBBB',
         'side-indicator-focus': '#C6E1F7'
+      },
+      gridTemplateColumns: {
+        // Complex site-specific column configuration
+        'side-container': '100px 1fr 3fr',
       }
     },
   },

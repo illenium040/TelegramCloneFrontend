@@ -22,6 +22,11 @@ export default class Sidebar extends Component {
         ]
     }
 
+    componentDidMount(): void {
+        console.log(this);
+    }
+
+
     render() {
         return (
             <aside className="min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">

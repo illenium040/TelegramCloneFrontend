@@ -34,7 +34,7 @@ html{
 
 @layer components{
     .sidebar-container{
-        @apply flex flex-row
+        @apply grid grid-cols-side-container
     }
     .sidebar-ref{
         @apply h-20 flex justify-center items-center text-base font-normal
@@ -58,7 +58,7 @@ html{
     }
 
     .chat-sidebar-list{
-        @apply w-3/12 h-screen bg-white min-w-[350px]
+        @apply h-screen bg-white min-w-[300px]
         overflow-auto
     }
 
@@ -127,9 +127,11 @@ html{
   .chat-message {
     @apply flex flex-row items-end m-1
   }
-
+  .chat-message-avatar{
+    @apply w-[30px]
+  }
   .chat-message-avatar img{
-    @apply rounded-full object-contain w-[40px] h-[40px]
+    @apply rounded-full object-contain w-[30px]
   }
 
   .chat-message-text-container{
