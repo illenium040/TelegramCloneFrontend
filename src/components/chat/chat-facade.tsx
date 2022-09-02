@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { UserDTO } from '../models/user-models';
-import { ChatDTO, ChatListUnit } from '../models/chat-models';
-import { useInjection } from '../extensions/di-container';
-import { SidebarChatList } from './sidebar-chat-list';
+import { UserDTO } from '../../models/user-models';
+import { ChatDTO, ChatListUnit } from '../../models/chat-models';
+import { useInjection } from '../../extensions/di-container';
+import { SidebarChatList } from '../sidebar-chat-list';
 import { ChatComponent } from './chat-component';
 
 type ChatFacadeState = {

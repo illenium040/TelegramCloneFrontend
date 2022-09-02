@@ -3,6 +3,7 @@ import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll";
 import { ChatListUnit } from '../models/chat-models';
 import { UserDTO } from '../models/user-models';
 import { useInjection } from '../extensions/di-container';
+import { getDateString } from '../extensions/global-extensions';
 
 
 type SidebarChatListProps = {
@@ -23,10 +24,7 @@ export const SidebarChatList = (props: SidebarChatListProps) => {
             .then(x => setChatList({ chatList: x }))
     }, [])
 
-    const getDateString = (dbDate: Date) => {
-        var date = new Date(dbDate);
-        return `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`;
-    }
+
     return (
         <aside className='group 
             chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm'>

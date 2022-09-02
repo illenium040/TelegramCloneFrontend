@@ -27,7 +27,7 @@ html{
 
 @media screen(lg) {
   .my-chat-message{
-    @apply self-start
+    @apply self-start flex-row
   }
 }
 
@@ -119,11 +119,11 @@ html{
   }
 
   .chat-message-text-container{
-    @apply bg-white p-2 rounded-md ml-2
+    @apply bg-white p-2 rounded-md m-1
     flex
   }
   .my-chat-message{
-    @apply self-end
+    @apply self-end flex-row-reverse
   }
   .my-chat-message .chat-message-text-container{
     @apply bg-green-200

@@ -3,7 +3,7 @@ import { UserService } from './services/user-service';
 import { UserDTO } from './models/user-models';
 import { SignalRService } from './services/signalR-services';
 import { Sidebar } from './components/sidebar';
-import { ChatFacade } from './components/chat-facade';
+import { ChatFacade } from './components/chat/chat-facade';
 
 const App = () => {
   const [user, setUser] = useState<UserDTO | null>(null)
