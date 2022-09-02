@@ -13,6 +13,10 @@ html{
     background-position: center;
 }
 
+#root {
+  @apply w-full h-screen
+}
+
 @layer utilities {
   .border-gray {
     @apply border-gray-200 border-[2px] p-2

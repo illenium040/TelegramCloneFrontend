@@ -20,6 +20,9 @@ export class ObserverEvent<T> implements IObservable<T> {
     removeObserver(observer: IObserver<T>) {
 
     }
+    clear() {
+        this._obs = [];
+    }
     notifyObservers(data: T) {
         this._obs.forEach((x, i) => {
             x.update(data);

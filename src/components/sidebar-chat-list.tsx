@@ -4,26 +4,25 @@ import { ChatListUnit } from '../models/chat-models';
 import { UserDTO } from '../models/user-models';
 import { useInjection } from '../extensions/di-container';
 import { getDateString } from '../extensions/global-extensions';
+import { useTypedSelector } from '../store/store';
+import { useActions } from '../store/use-actions';
+import { Loading } from './helpers/loading';
 
 
 type SidebarChatListProps = {
     user: UserDTO;
     onChatSelected: (chat: ChatListUnit) => void;
 }
-type SidebarChatListState = {
-    chatList?: ChatListUnit[];
-}
 
 export const SidebarChatList = (props: SidebarChatListProps) => {
     const { onChatSelected, user } = props;
-    const [state, setChatList] = useState<SidebarChatListState | null>(null);
     const { chatService } = useInjection();
+    const { chatList, error, loading } = useTypedSelector(state => state.chatListReducer);
+    const { fetchChatList } = useActions();
 
     useEffect(() => {
-        chatService.getChatList(user.id)
-            .then(x => setChatList({ chatList: x }))
+        fetchChatList(chatService, user.id);
     }, [])
-
 
     return (
         <aside className='group 
@@ -31,8 +30,9 @@ export const SidebarChatList = (props: SidebarChatListProps) => {
             <div className='chat-list-search'>
                 <input placeholder='Поиск...' type="text" />
             </div>
-
-            {state?.chatList?.map((x, i) =>
+            {error ?? error}
+            {loading && <Loading />}
+            {chatList?.map((x, i) =>
                 <div key={i} className='group chat-user' tabIndex={i} onClick={() => onChatSelected(x)}>
                     <span className='row-span-2'>
                         <img className='chat-image' src={x.user.avatar} alt="" />
