@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { BsFillChatFill } from "@react-icons/all-files/bs/BsFillChatFill";
 import { BsJustify } from "@react-icons/all-files/bs/BsJustify";
 import { BsFolder } from "@react-icons/all-files/bs/BsFolder";
@@ -9,42 +8,30 @@ type SidebarIcon = {
     anchoredText?: string;
 }
 
-export default class Sidebar extends Component {
+export const Sidebar = () => {
+    const icons: SidebarIcon[] = [
+        { icon: <BsJustify className='sidebar-ico' /> },
+        { icon: <BsFillChatFill className='sidebar-ico' />, anchoredText: "Все чаты" },
+        { icon: <BsFolder className='sidebar-ico' />, anchoredText: "Личные" },
+        { icon: <BsGear className='sidebar-ico' />, anchoredText: "Ред." }
+    ]
 
-    private readonly _icons: SidebarIcon[];
-    constructor() {
-        super({});
-        this._icons = [
-            { icon: <BsJustify className='sidebar-ico' /> },
-            { icon: <BsFillChatFill className='sidebar-ico' />, anchoredText: "Все чаты" },
-            { icon: <BsFolder className='sidebar-ico' />, anchoredText: "Личные" },
-            { icon: <BsGear className='sidebar-ico' />, anchoredText: "Ред." }
-        ]
-    }
+    return (
+        <aside className="min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">
+            <div className="overflow-y-auto dark:bg-gray-800">
+                <ul className="space-y-2">
+                    {
+                        icons.map((x, i) =>
+                            <li key={i}>
+                                <a href="#" className="group sidebar-ref">
+                                    {x.icon}
+                                    <span>{x.anchoredText}</span>
+                                </a>
+                            </li>)
+                    }
+                </ul>
+            </div>
+        </aside>
+    )
 
-    componentDidMount(): void {
-        console.log(this);
-    }
-
-
-    render() {
-        return (
-            <aside className="min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">
-                <div className="overflow-y-auto dark:bg-gray-800">
-                    <ul className="space-y-2">
-                        {
-                            this._icons.map((x, i) =>
-                                <li key={i}>
-                                    <a href="#" className="group sidebar-ref">
-                                        {x.icon}
-                                        <span>{x.anchoredText}</span>
-                                    </a>
-                                </li>)
-                        }
-
-                    </ul>
-                </div>
-            </aside>
-        )
-    }
 }

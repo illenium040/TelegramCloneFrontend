@@ -1,49 +1,42 @@
-import React, { Component } from 'react'
-import ChatComponent from './chat-component';
-import SidebarChatList from './sidebar-chat-list';
-import { ChatService } from '../services/chat-service';
+import { useCallback, useEffect, useState } from 'react'
 import { UserDTO } from '../models/user-models';
 import { ChatDTO, ChatListUnit } from '../models/chat-models';
+import { useInjection } from '../extensions/di-container';
+import { SidebarChatList } from './sidebar-chat-list';
+import { ChatComponent } from './chat-component';
 
-interface ChatFacadeState {
+type ChatFacadeState = {
     selectedChat?: ChatListUnit
     chatMessages?: ChatDTO;
 }
 
-export default class ChatFacade extends Component<{ user: UserDTO }, ChatFacadeState> {
+type ChatFacadeProps = {
+    user: UserDTO;
+}
 
-    private _chatService: ChatService;
-    constructor(user: UserDTO) {
-        super({ user });
-        this.state = {
-            selectedChat: undefined,
-            chatMessages: undefined
-        };
-        this._chatService = new ChatService();
-    }
+export const ChatFacade = (props: ChatFacadeProps) => {
+    const { user } = props;
+    const [state, setState] = useState<ChatFacadeState | null>(null)
+    const { chatService } = useInjection();
 
-    private onChatSelected(u: ChatListUnit) {
+    const onChatSelected = useCallback((u: ChatListUnit) => {
         console.log(u);
-        this._chatService.getChatMessages(u.chatId)
-            .then(x => this.setState({ selectedChat: u, chatMessages: x }))
-    }
+        chatService.getChatMessages(u.chatId)
+            .then(x => setState({ selectedChat: u, chatMessages: x }))
+    }, [state]);
 
-    render() {
-        return (
-            <React.Fragment>
-                <SidebarChatList
-                    chatService={this._chatService}
-                    user={this.props.user}
-                    onChatSelected={this.onChatSelected.bind(this)} />
-                {this.state.selectedChat !== undefined &&
-                    this.state.chatMessages !== undefined ?
-                    <ChatComponent
-                        chatService={this._chatService}
-                        currentUser={this.props.user}
-                        targetUser={this.state.selectedChat.user}
-                        chat={this.state.chatMessages} />
-                    : <></>}
-            </React.Fragment>
-        )
-    }
+    return (
+        <>
+            <SidebarChatList
+                user={user}
+                onChatSelected={onChatSelected.bind(this)} />
+            {state &&
+                <ChatComponent
+                    currentUser={props.user}
+                    targetUser={state!.selectedChat!.user}
+                    chat={state!.chatMessages!} />
+            }
+        </>
+    )
+
 }

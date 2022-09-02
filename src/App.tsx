@@ -1,48 +1,43 @@
-import React from 'react';
-import Sidebar from './components/sidebar';
-import ChatFacade from './components/chat-facade';
+import { useEffect, useState } from 'react';
 import { UserService } from './services/user-service';
 import { UserDTO } from './models/user-models';
 import { SignalRService } from './services/signalR-services';
+import { Sidebar } from './components/sidebar';
+import { ChatFacade } from './components/chat-facade';
 
-class App extends React.Component<{}, { user: UserDTO }> {
+const App = () => {
+  const [user, setUser] = useState<UserDTO | null>(null)
+  const userService = new UserService();
 
-  private _userService = new UserService();
+  //use only on the first render
+  useEffect(() => {
+    getUserDBG();
+  }, [])
 
-  constructor(props: any) {
-    super(props);
-  }
 
-
-  componentDidMount() {
-    console.log(this);
-    this.getUserDBG();
-  }
-
-  private getUser(index: number) {
-    this._userService.getUserByIndex(index)
+  const getUser = (index: number) => {
+    userService.getUserByIndex(index)
       .then(async (x) => {
         await SignalRService.getInstanceOf().init(x.id);
-        this.setState({ user: x });
+        setUser(x);
       });
   }
 
-  private getUserDBG() {
-    if (window.location.port === '3000') { this.getUser(0); }
-    else { this.getUser(1); }
+  const getUserDBG = () => {
+    if (window.location.port === '3000') { getUser(0); }
+    else { getUser(1); }
   }
 
-  public render() {
-    if (!this.state) return <p>loading...</p>
-    return (
-      <div className="app">
-        <div className='sidebar-container'>
-          <Sidebar />
-          <ChatFacade user={this.state.user} />
-        </div>
+  if (!user) return <p>loading...</p>
+
+  return (
+    <div className="app">
+      <div className='sidebar-container'>
+        <Sidebar />
+        <ChatFacade user={user} />
       </div>
-    );
-  }
+    </div>
+  )
 
 }
 

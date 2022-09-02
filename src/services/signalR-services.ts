@@ -6,8 +6,9 @@ export class SignalRService {
 
     private static _signalInstance: SignalRService;
     public static getInstanceOf() {
-        if (!this._signalInstance)
+        if (!this._signalInstance) {
             this._signalInstance = new SignalRService();
+        }
         return SignalRService._signalInstance;
     }
 
@@ -21,11 +22,11 @@ export class SignalRService {
     }
 
     public OnMessageReceive(callback: (...arg0: any[]) => void) {
-        this._hub?.on("ReceiveMessage", callback)
+        this._hub?.on("ReceiveMessage", callback);
     }
 
     public OnMessageSended(callback: (...arg0: any[]) => void) {
-        this._hub?.on("MessageSended", callback)
+        this._hub?.on("MessageSended", callback);
     }
 
     public async sendMessage(message: MessageToServer) {

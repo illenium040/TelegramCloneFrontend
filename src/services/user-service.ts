@@ -1,7 +1,6 @@
 import { serverHost } from './../extensions/axios-extensions';
 import { UserDTO } from '../models/user-models';
 import axios from 'axios';
-import { tryAxiosRequest } from '../extensions/axios-extensions';
 
 export class UserService {
 

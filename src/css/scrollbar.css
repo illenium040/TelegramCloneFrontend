@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .chat-sidebar-list:hover::-webkit-scrollbar-track{
+        @apply bg-side-chat-hover 
+    }
+    .chat-sidebar-list:hover::-webkit-scrollbar-thumb{
+        @apply bg-sidebar-ico
+    }
+    .chat-sidebar-list:hover::-webkit-scrollbar-thumb:hover{
+        @apply bg-sidebar-focus
+    }
+
+    .chat-sidebar-list
+        .chat-scrollbar::-webkit-scrollbar-track {
+            @apply bg-transparent
+        }
+    .chat-sidebar-list 
+        .chat-scrollbar::-webkit-scrollbar-thumb {
+            @apply bg-transparent
+        }
+    .chat-scrollbar::-webkit-scrollbar {
+        @apply w-2 
+    }
+
+  .chat-scrollbar::-webkit-scrollbar-track {
+    @apply rounded-xl bg-side-chat-hover mt-1 mb-1
+  }
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-xl bg-sidebar-ico mt-1 mb-1
+  }
+}

@@ -8,7 +8,7 @@ html{
 }
 
 .app{
-    background-image: url('./assets/images/bg.jpg');
+    background-image: url('../assets/images/bg.jpg');
     background-size: cover;
     background-position: center;
 }
@@ -74,35 +74,19 @@ html{
     .chat-image{
         @apply w-[60px] h-[60px] rounded-full object-contain
     }
-    .chat-sidebar:hover::-webkit-scrollbar-track{
-        @apply bg-side-chat-hover 
-    }
-    .chat-sidebar:hover::-webkit-scrollbar-thumb{
-        @apply bg-sidebar-ico
-    }
-    .chat-sidebar:hover::-webkit-scrollbar-thumb:hover{
-        @apply bg-sidebar-focus
-    }
-    .chat-scrollbar::-webkit-scrollbar {
-        @apply w-2 
-    }
-  .chat-scrollbar::-webkit-scrollbar-track {
-    @apply rounded-xl bg-transparent
-  }
-  .chat-scrollbar::-webkit-scrollbar-thumb {
-    @apply rounded-xl bg-transparent
-  }
-
 
   .chat {
-    @apply bg-transparent flex flex-col w-full;
+    @apply bg-transparent flex flex-col w-full h-screen ;
   }
   .chat-header{
     @apply self-start min-h-[60px] bg-white w-full p-4 
     flex flex-row
   }
   .chat-body{
-    @apply h-full flex flex-col items-start p-2 justify-end
+    @apply h-full  overflow-auto 
+  }
+  .chat-body-scrollable {
+    @apply h-full w-full 
   }
   .chat-footer{
     @apply self-end min-h-[40px] bg-white w-full

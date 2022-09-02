@@ -1,5 +1,5 @@
 import { MessageToServer } from './../models/message-models';
-import { serverHost, tryAxiosRequest } from './../extensions/axios-extensions';
+import { serverHost } from './../extensions/axios-extensions';
 import { ObserverEvent } from "../extensions/observer-pattern";
 import { ChatDTO, ChatListUnit } from "../models/chat-models";
 import { MessageDTO } from "../models/message-models";
@@ -9,16 +9,23 @@ import axios from 'axios';
 export class ChatService {
     public OnReceive: ObserverEvent<MessageDTO>;
     public OnSended: ObserverEvent<MessageDTO>;
+
     constructor() {
         this.OnReceive = new ObserverEvent();
         this.OnSended = new ObserverEvent();
-        SignalRService.getInstanceOf().OnMessageReceive((messageDTO: MessageDTO) => {
-            console.log(messageDTO);
-            this.OnReceive.notifyObservers(messageDTO);
-        });
+    }
+
+    public subscribeOnSended() {
         SignalRService.getInstanceOf().OnMessageSended((messageDTO: MessageDTO) => {
             console.log(messageDTO);
             this.OnSended.notifyObservers(messageDTO);
+        });
+    }
+
+    public subscribeOnReceive() {
+        SignalRService.getInstanceOf().OnMessageReceive((messageDTO: MessageDTO) => {
+            console.log(messageDTO);
+            this.OnReceive.notifyObservers(messageDTO);
         });
     }
 
