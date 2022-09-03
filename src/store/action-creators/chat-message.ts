@@ -22,8 +22,8 @@ export const sendChatMessage = (message: MessageToServer, chatService: ChatServi
     return async (dispatch: Dispatch<SendChatMessages>) => {
         try {
             dispatch({ type: SendMessage.SEND, payload: message })
-            dispatch({ type: SendMessage.SENDING, payload: message });
             await chatService.sendMessageDTO(message);
+
             dispatch({ type: SendMessage.SENDED });
         } catch (e) {
             dispatch({

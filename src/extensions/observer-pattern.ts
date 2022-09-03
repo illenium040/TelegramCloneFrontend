@@ -18,10 +18,8 @@ export class ObserverEvent<T> implements IObservable<T> {
         this._obs.push(observer);
     }
     removeObserver(observer: IObserver<T>) {
-
-    }
-    clear() {
-        this._obs = [];
+        const index = this._obs.findIndex((x) => x === observer);
+        this._obs.splice(index, 1);
     }
     notifyObservers(data: T) {
         this._obs.forEach((x, i) => {

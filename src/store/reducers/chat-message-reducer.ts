@@ -11,7 +11,6 @@ export interface ChatMessagesState extends LoadingState {
 }
 
 export interface SendChatMessageState extends LoadingStateWithTError<SendErrorMessage> {
-    message?: MessageDTO | null;
     sendedMessage: MessageToServer | null;
 }
 
@@ -34,16 +33,15 @@ export const getChatMessagesReducer = (state: ChatMessagesState = {
 }
 
 export const sendChatMessageReducer = (state: SendChatMessageState =
-    { error: null, loading: false, message: null, sendedMessage: null },
+    { error: null, loading: true, sendedMessage: null },
     action: SendChatMessages): SendChatMessageState => {
     switch (action.type) {
         case SendMessage.SEND:
-        case SendMessage.SENDING:
             return { error: null, loading: true, sendedMessage: action.payload };
         case SendMessage.ERROR:
             return { error: action.payload, loading: false, sendedMessage: null };
         case SendMessage.SENDED:
-            return { error: null, loading: false, message: null, sendedMessage: null };
+            return { error: null, loading: false, sendedMessage: null };
         default:
             return state;
     }

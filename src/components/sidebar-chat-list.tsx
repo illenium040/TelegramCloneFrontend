@@ -38,19 +38,25 @@ export const SidebarChatList = (props: SidebarChatListProps) => {
                         <img className='chat-image' src={x.user.avatar} alt="" />
                     </span>
                     <span className='col-span-2 group-focus:text-white font-semibold text-lg'>{x.user.name}</span>
-                    <div className='text-center text-side-gray flex flex-row group-focus:text-white text-sm items-center justify-center'>
-                        <span className='flex justify-center items-center m-1 group-focus:text-white text-green-400'>
-                            <BsCheckAll />
-                        </span>
-                        <p>{getDateString(x.lastMessage.created)}</p>
-                    </div>
-                    <span className='col-span-2 text-default-gray group-focus:text-white'>{x.lastMessage.content}</span>
-                    <span className='flex justify-center items-center rounded-xl min-w-min text-white'>
-                        <p className='
+                    {x.lastMessage &&
+                        <div className='text-center text-side-gray flex flex-row group-focus:text-white text-sm items-center justify-center'>
+                            <span className='flex justify-center items-center m-1 group-focus:text-white text-green-400'>
+                                <BsCheckAll />
+                            </span>
+                            <p>{getDateString(x.lastMessage?.created)}</p>
+                        </div>
+                    }
+                    {x.lastMessage &&
+                        <span className='col-span-2 text-default-gray group-focus:text-white'>{x.lastMessage?.content}</span>
+                    }
+                    {x.unreadMessagesCount > 0 &&
+                        <span className='flex justify-center items-center rounded-xl min-w-min text-white'>
+                            <p className='
                     group-focus:text-white
                     group-focus:bg-side-indicator-focus 
                       text-center min-w-[40px] p-1 rounded-xl bg-sidebar-ico-focus'>{x.unreadMessagesCount}</p>
-                    </span>
+                        </span>
+                    }
                 </div>
             )}
         </aside>

@@ -5,8 +5,8 @@ import { UserService } from '../../services/user-service';
 
 const userService = new UserService();
 
-const getUser = (index: number) => {
-    return userService.getUserByIndex(index)
+const getUser = (name: string) => {
+    return userService.getUserByName(name)
         .then(async (x) => {
             await SignalRService.getInstanceOf().init(x.id);
             return x;
@@ -14,8 +14,9 @@ const getUser = (index: number) => {
 }
 
 const getUserDBG = async () => {
-    if (window.location.port === '3000') { return getUser(0); }
-    else { return getUser(1); }
+    if (window.location.port === '3000') { return getUser("Виталий"); }
+    else if (window.location.port === '3001') { return getUser("Давыда"); }
+    else { return getUser("Олег"); }
 }
 
 export const fetchUser = () => {

@@ -1,14 +1,16 @@
 
-export interface MessageToServer {
+export interface IMessage {
+    content: string;
+    userIdFrom: string;
+}
+
+export interface MessageToServer extends IMessage {
     userIdTo: string;
     chatId: string;
-    userIdFrom: string;
     content: string;
 }
 
-export interface MessageDTO {
+export interface MessageDTO extends IMessage {
     id: string;
-    userIdFrom: string;
-    content: string;
     created: Date;
 }

@@ -10,6 +10,6 @@ export interface ChatListUnit {
     user: UserDTO;
     chatId: string;
     unreadMessagesCount: number;
-    lastMessage: MessageDTO;
+    lastMessage?: MessageDTO;
 }
 

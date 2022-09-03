@@ -5,8 +5,8 @@ import axios from 'axios';
 export class UserService {
 
     //dbg function to take user without login in
-    public async getUserByIndex(index: number) {
-        let x = await axios.get<UserDTO>(serverHost + `/api/db/user/${index}`)
+    public async getUserByName(name: string) {
+        let x = await axios.get<UserDTO>(serverHost + `/api/db/user/${name}`)
         return x?.data;
     }
 
