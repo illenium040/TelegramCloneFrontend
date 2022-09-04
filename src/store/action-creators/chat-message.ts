@@ -1,14 +1,15 @@
-import { MessageToServer } from './../../models/message-models';
-import { GetChatMessages, GetMessages, SendChatMessages, SendMessage } from './../types/fetch-message';
-import { Dispatch } from 'redux';
-import { ChatService } from '../../services/chat-service';
+import { SignalRService } from './../../services/signalR-services'
+import { MessageToServer } from './../../models/message-models'
+import { GetChatMessages, GetMessages, SendChatMessages, SendMessage } from './../types/fetch-message'
+import { Dispatch } from 'redux'
+import { ChatService } from '../../services/chat-service'
 
 export const getChatMessages = (chatId: string, chatService: ChatService) => {
     return async (dispatch: Dispatch<GetChatMessages>) => {
         try {
             dispatch({ type: GetMessages.FETCH })
             const response = await chatService.getChatMessages(chatId)
-            dispatch({ type: GetMessages.SUCCESS, payload: response });
+            dispatch({ type: GetMessages.SUCCESS, payload: response })
         } catch (e) {
             dispatch({
                 type: GetMessages.ERROR,
@@ -18,13 +19,12 @@ export const getChatMessages = (chatId: string, chatService: ChatService) => {
     }
 }
 
-export const sendChatMessage = (message: MessageToServer, chatService: ChatService) => {
+export const sendChatMessage = (message: MessageToServer, signalR: SignalRService) => {
     return async (dispatch: Dispatch<SendChatMessages>) => {
         try {
             dispatch({ type: SendMessage.SEND, payload: message })
-            await chatService.sendMessageDTO(message);
-
-            dispatch({ type: SendMessage.SENDED });
+            await signalR.sendMessage(message)
+            dispatch({ type: SendMessage.SENDED })
         } catch (e) {
             dispatch({
                 type: SendMessage.ERROR,

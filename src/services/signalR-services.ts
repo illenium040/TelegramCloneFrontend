@@ -1,54 +1,59 @@
-import { MessageToServer } from './../models/message-models';
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { serverHost } from '../extensions/axios-extensions';
+import { MessageDTO, MessageToServer } from './../models/message-models'
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr'
+import { serverHost } from '../extensions/axios-extensions'
+import { ObserverEvent } from '../extensions/observer-pattern'
 
 export class SignalRService {
-
-    private static _signalInstance: SignalRService;
-    public static getInstanceOf() {
-        if (!this._signalInstance) {
-            this._signalInstance = new SignalRService();
-        }
-        return SignalRService._signalInstance;
+    private _hub?: HubConnection
+    private _isHubSet: boolean = false
+    public async startSignalRConnection(userId: string, url: string) {
+        if (this._hub) return
+        this._isHubSet = false
+        const hub = new HubConnectionBuilder()
+            .withUrl(serverHost + url)
+            .withAutomaticReconnect()
+            .build()
+        await hub
+            .start()
+            .then(() => {
+                console.log('Connection started')
+            })
+            .catch(err => {
+                console.log('Error while starting connection: ' + err)
+            })
+        await hub?.send('SetUserHub', userId).then(x => console.log(`Hub is set for ${hub?.connectionId}!`))
+        this._isHubSet = true
+        this._hub = hub
+        //this.OnMessageReceive()
+        //this.OnMessageSended()
     }
 
-    private _hub?: HubConnection;
-    private _userId?: string
-    private constructor() { }
+    public OnReceive: ObserverEvent<MessageDTO> = new ObserverEvent()
+    public OnSended: ObserverEvent<MessageDTO> = new ObserverEvent()
 
-    public async init(userId: string) {
-        await SignalRService.getInstanceOf().startConnection(userId)
-            .catch(err => console.log('Error while establishing connection :('));
+    private OnMessageReceive() {
+        this._hub?.on('ReceiveMessage', (message: MessageDTO) => {
+            this.OnReceive.notifyObservers(message)
+        })
     }
 
-    public OnMessageReceive(callback: (...arg0: any[]) => void) {
-        this._hub?.on("ReceiveMessage", callback);
-    }
-
-    public OnMessageSended(callback: (...arg0: any[]) => void) {
-        this._hub?.on("MessageSended", callback);
+    private OnMessageSended() {
+        this._hub?.on('MessageSended', (message: MessageDTO) => {
+            this.OnSended.notifyObservers(message)
+        })
     }
 
     public async sendMessage(message: MessageToServer) {
-        this._hub?.send("SendMessage", message);
+        this._hub?.send('SendMessage', message)
     }
 
-    private async startConnection(userId: string) {
-        this._userId = userId;
-        this._hub = new HubConnectionBuilder()
-            .withUrl(serverHost + "/hubs/notifications")
-            .withAutomaticReconnect()
-            .build();
-        await this._hub.start()
-            .then(() => console.log('Connection started'))
-            .catch(err => console.log('Error while starting connection: ' + err))
-        await this.setHub()
-            .then(x => console.log(`Hub is set for ${this._hub?.connectionId}!`));
+    public get isConnected(): boolean {
+        if (!this._hub) return false
+        if (this._hub.state === HubConnectionState.Connected && this._isHubSet) return true
+        return false
     }
 
-    private async setHub() {
-        await this._hub?.send("SetUserHub", this._userId);
+    public get Hub() {
+        return this._hub
     }
-
-
 }

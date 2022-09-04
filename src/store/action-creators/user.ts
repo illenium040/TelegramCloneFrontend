@@ -1,30 +1,27 @@
-import { FetchCurrentUser, FetchCurrentUserTypes } from './../types/fetch-user';
-import { Dispatch } from 'redux';
-import { SignalRService } from '../../services/signalR-services';
-import { UserService } from '../../services/user-service';
+import { UserService } from './../../services/user-service'
+import { FetchCurrentUser, FetchCurrentUserTypes } from './../types/fetch-user'
+import { Dispatch } from 'redux'
 
-const userService = new UserService();
-
-const getUser = (name: string) => {
+const getUser = (name: string, userService: UserService) => {
     return userService.getUserByName(name)
-        .then(async (x) => {
-            await SignalRService.getInstanceOf().init(x.id);
-            return x;
-        });
 }
 
-const getUserDBG = async () => {
-    if (window.location.port === '3000') { return getUser("Виталий"); }
-    else if (window.location.port === '3001') { return getUser("Давыда"); }
-    else { return getUser("Олег"); }
+const getUserDBG = async (userService: UserService) => {
+    if (window.location.port === '3000') {
+        return getUser('Виталий', userService)
+    } else if (window.location.port === '3001') {
+        return getUser('Давыда', userService)
+    } else {
+        return getUser('Олег', userService)
+    }
 }
 
-export const fetchUser = () => {
+export const fetchUser = (userService: UserService) => {
     return async (dispatch: Dispatch<FetchCurrentUser>) => {
         try {
             dispatch({ type: FetchCurrentUserTypes.FETCH })
-            const response = await getUserDBG();
-            dispatch({ type: FetchCurrentUserTypes.FETCH_SUCCESS, payload: response });
+            const response = await getUserDBG(userService)
+            dispatch({ type: FetchCurrentUserTypes.FETCH_SUCCESS, payload: response })
         } catch (e) {
             dispatch({
                 type: FetchCurrentUserTypes.FETCH_ERROR,
