@@ -3,6 +3,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { serverHost } from '../extensions/axios-extensions'
 import { ObserverEvent } from '../extensions/observer-pattern'
 
+//refactor it somehow
 export class SignalRService {
     private _hub?: HubConnection
     private _isHubSet: boolean = false

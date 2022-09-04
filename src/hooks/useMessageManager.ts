@@ -7,16 +7,19 @@ import { useInjection } from './useInjection'
 
 export const useMessages = (userIdTo: string) => {
     const { signalRService } = useInjection()
-    //how to memo?
     const myMessages = useRef<MessageDTO[]>([])
     const receivedMessages = useRef<MessageDTO[]>([])
+    const [sendedMessage, setSended] = useState<MessageDTO>()
+    const [receivedMessage, setReceived] = useState<MessageDTO>()
     useEffect(() => {
         signalRService.Hub?.on('MessageSended', (data: MessageDTO) => {
             myMessages.current.push(data)
+            setSended(data)
         })
         signalRService.Hub?.on('ReceiveMessage', (data: MessageDTO) => {
             if (data.userIdFrom === userIdTo) {
                 receivedMessages.current.push(data)
+                setReceived(data)
             }
         })
     }, [])
