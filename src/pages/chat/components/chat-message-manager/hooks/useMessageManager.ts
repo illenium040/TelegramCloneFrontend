@@ -1,10 +1,10 @@
-import { UserDTO } from '../../../../../common/models/user-models'
-import { ChatListUnit, ChatDTO } from '../../../models/chat'
+import { getTime } from 'common/extensions/global-extensions'
+import { useInjection } from 'common/hooks/useInjection'
+import { UserDTO } from 'common/models/user-models'
+import { ChatDTO, ChatListUnit } from 'pages/chat/models/chat'
+import { MessageDTO, MessageToServer } from 'pages/chat/models/message'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { MessageDTO, MessageToServer } from '../../../models/message'
 import { v4 as uuidv4 } from 'uuid'
-import { useInjection } from '../../../../../common/hooks/useInjection'
-import { getTime } from '../../../../../common/extensions/global-extensions'
 
 export const useMessages = (userIdTo: string) => {
     const { signalRService } = useInjection()

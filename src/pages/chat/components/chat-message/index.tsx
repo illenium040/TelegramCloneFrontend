@@ -1,4 +1,4 @@
-import { getDateString } from '../../../../common/extensions/global-extensions'
+import { getDateString } from 'common/extensions/global-extensions'
 
 export type MessageProps = {
     id: string

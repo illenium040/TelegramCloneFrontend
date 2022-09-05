@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useActions, useTypedSelector } from '../../common/store'
-import { useInjection } from '../../common/hooks/useInjection'
+import { useActions, useTypedSelector } from 'common/store'
+import { useInjection } from 'common/hooks/useInjection'
 import ChatContainer from '../chat'
 import Loading from '../loading'
 import Sidebar from '../sidebar'

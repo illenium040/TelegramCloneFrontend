@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { BsCheckAll } from '@react-icons/all-files/bs/BsCheckAll'
-import { UserDTO } from '../../common/models/user-models'
-import { getDateString } from '../../common/extensions/global-extensions'
+import { UserDTO } from 'common/models/user-models'
+import { getDateString } from 'common/extensions/global-extensions'
 import { useActions, useTypedSelector } from '../../common/store'
-import { useInjection } from '../../common/hooks/useInjection'
+import { useInjection } from 'common/hooks/useInjection'
 import { ChatListUnit } from '../chat/models/chat'
 import Loading from '../loading'
 

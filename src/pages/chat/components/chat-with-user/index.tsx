@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { ChatListUnit } from '../../models/chat'
-import { UserDTO } from '../../../../common/models/user-models'
-import { useActions, useTypedSelector } from '../../../../common/store'
-import { useInjection } from '../../../../common/hooks/useInjection'
 import ChatHeader from '../chat-with-user-header'
 import MessageManager from '../chat-message-manager'
-import Loading from '../../../loading'
+import Loading from 'pages/loading'
+import { UserDTO } from 'common/models/user-models'
+import { ChatListUnit } from 'pages/chat/models/chat'
+import { useInjection } from 'common/hooks/useInjection'
+import { useActions, useTypedSelector } from 'common/store'
 
 type ChatProps = {
     currentUser: UserDTO

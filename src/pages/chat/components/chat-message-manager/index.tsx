@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
-import { ChatDTO, ChatListUnit } from '../../models/chat'
-import { MessageDTO } from '../../models/message'
-import { UserDTO } from '../../../../common/models/user-models'
-import { ChatFooter } from '../chat-with-user-footer'
-import { scrollBottom } from '../../../../common/extensions/global-extensions'
 import { useMessageManager } from './hooks/useMessageManager'
 import Message from '../chat-message'
 import MyMessage from '../chat-my-message'
 import MessageFromClient from '../chat-message-sended'
+import { ChatDTO, ChatListUnit } from 'pages/chat/models/chat'
+import { UserDTO } from 'common/models/user-models'
+import { scrollBottom } from 'common/extensions/global-extensions'
+import { MessageDTO } from 'pages/chat/models/message'
+import ChatFooter from '../chat-with-user-footer'
 
 type MessageManagerProps = {
     chat: ChatDTO

@@ -1,4 +1,4 @@
-import { getDateString } from '../../../../common/extensions/global-extensions'
+import { getDateString } from 'common/extensions/global-extensions'
 import { MessageProps } from '../chat-message'
 
 const MyMessage = (props: MessageProps) => {

@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { useInjection } from '../../../../common/hooks/useInjection'
-import { MessageToServer } from '../../models/message'
-import { UserDTO } from '../../../../common/models/user-models'
+import { useInjection } from 'common/hooks/useInjection'
 import MyMessage from '../chat-my-message'
-import Loading from '../../../loading'
 import { useActions, useTypedSelector } from 'common/store'
+import { MessageToServer } from 'pages/chat/models/message'
+import { UserDTO } from 'common/models/user-models'
+import Loading from 'pages/loading'
 
 type MessageSendProps = {
     message: MessageToServer
