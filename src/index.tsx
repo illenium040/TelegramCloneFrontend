@@ -2,9 +2,10 @@ import ReactDOM from 'react-dom/client'
 import App from './pages/App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
-import { store } from './common/store'
+import { store } from './api'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+
 root.render(
     <Provider store={store}>
         <App />

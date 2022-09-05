@@ -1,3 +1,4 @@
+import { useGetChatMessagesQuery } from 'api/signalR'
 import { getTime } from 'common/extensions/global-extensions'
 import { useInjection } from 'common/hooks/useInjection'
 import { UserDTO } from 'common/models/user-models'

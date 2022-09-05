@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
 import { BsCheckAll } from '@react-icons/all-files/bs/BsCheckAll'
 import { UserDTO } from 'common/models/user-models'
 import { getDateString } from 'common/extensions/global-extensions'
-import { useActions, useTypedSelector } from '../../common/store'
-import { useInjection } from 'common/hooks/useInjection'
 import { ChatListUnit } from '../chat/models/chat'
 import Loading from '../loading'
+import { useGetChatListQuery } from 'api/chat'
 
 type SidebarChatListProps = {
     user: UserDTO
@@ -14,13 +12,7 @@ type SidebarChatListProps = {
 
 const SidebarChatList = (props: SidebarChatListProps) => {
     const { onChatSelected, user } = props
-    const { chatService } = useInjection()
-    const { chatList, error, loading } = useTypedSelector(state => state.chatListReducer)
-    const { fetchChatList } = useActions()
-
-    useEffect(() => {
-        fetchChatList(chatService, user.id)
-    }, [])
+    const { isError, error, isLoading, data } = useGetChatListQuery(user.id)
 
     return (
         <aside
@@ -30,9 +22,9 @@ const SidebarChatList = (props: SidebarChatListProps) => {
             <div className="chat-list-search">
                 <input placeholder="Поиск..." type="text" />
             </div>
-            {error ?? error}
-            {loading && <Loading />}
-            {chatList?.map((x, i) => (
+            {isError ?? error}
+            {isLoading && <Loading />}
+            {data?.map((x, i) => (
                 <div key={i} className="group chat-user" tabIndex={i} onClick={() => onChatSelected(x)}>
                     <span className="row-span-2">
                         <img className="chat-image" src={x.user.avatar} alt="" />

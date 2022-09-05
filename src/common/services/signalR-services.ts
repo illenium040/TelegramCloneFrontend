@@ -1,7 +1,7 @@
 import { MessageDTO, MessageToServer } from '../../pages/chat/models/message'
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr'
-import { serverHost } from '../extensions/axios-extensions'
 import { ObserverEvent } from '../extensions/observer-pattern'
+import { serverHost } from 'common/constants'
 
 //refactor it somehow
 export class SignalRService {

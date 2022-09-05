@@ -1,6 +1,6 @@
-import { serverHost } from '../extensions/axios-extensions'
 import { UserDTO } from '../models/user-models'
 import axios from 'axios'
+import { serverHost } from 'common/constants'
 
 export class UserService {
     //dbg function to take user without login in

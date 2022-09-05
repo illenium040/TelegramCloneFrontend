@@ -1,6 +1,6 @@
-import { serverHost } from '../extensions/axios-extensions'
 import { ChatDTO, ChatListUnit } from '../../pages/chat/models/chat'
 import axios from 'axios'
+import { serverHost } from 'common/constants'
 
 export class ChatService {
     public async getChatList(userId: string) {

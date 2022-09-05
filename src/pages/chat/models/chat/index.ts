@@ -3,6 +3,7 @@ import { UserDTO } from '../../../../common/models/user-models'
 
 export interface ChatDTO {
     id: string
+    userIdFrom: string
     messages: MessageDTO[]
 }
 
