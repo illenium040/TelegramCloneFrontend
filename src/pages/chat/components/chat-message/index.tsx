@@ -1,7 +1,7 @@
 import { getDateString } from 'common/extensions/global-extensions'
 
 export type MessageProps = {
-    id: string
+    id: string | undefined
     avatar: string
     content: string
     time: Date
