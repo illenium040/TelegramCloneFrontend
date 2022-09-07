@@ -1,10 +1,13 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr"
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
+import { loadableSliceAction } from "api/chat"
 import { serverHost } from "common/constants"
+import { MessageState } from "pages/chat/components/chat-message"
 import { ChatDTO } from "pages/chat/models/chat"
 import { MessageDTO } from "pages/chat/models/message"
 
-enum ChatEvent {
+export enum ChatEvent {
     Send = "SendMessage",
     Receive = "ReceiveMessage",
     SetHub = "SetUserHub"
@@ -40,38 +43,59 @@ export const signalRApi = createApi({
         baseUrl: serverHost
     }),
     endpoints: builder => ({
-        sendMessage: builder.mutation<void, MessageDTO>({
-            queryFn: (chatMessageContent: MessageDTO) => {
+        connect: builder.query<HubConnection, string>({
+            queryFn: (userId: string) => {
+                return new Promise(resolve => {
+                    if (!socket)
+                        connect(userId).then(hubConnection => {
+                            socket = hubConnection
+                            resolve({ data: socket })
+                        })
+                })
+            }
+        }),
+        sendMessage: builder.mutation<MessageDTO, MessageDTO>({
+            queryFn: (message: MessageDTO) => {
                 return new Promise(resolve =>
-                    new Promise(res => setTimeout(res, 1000)).then(n => {
-                        socket.invoke(ChatEvent.Send, chatMessageContent).then(x => resolve({ data: undefined }))
+                    new Promise(res => setTimeout(res, 1000)).then(async x => {
+                        await socket.invoke(ChatEvent.Send, message)
+                        resolve({ data: message })
                     })
                 )
+            },
+            async onQueryStarted(message, { dispatch, queryFulfilled }) {
+                dispatch(loadableSliceAction.load(message))
+                try {
+                    const { data } = await queryFulfilled
+                    dispatch(loadableSliceAction.sendToServer(data))
+                } catch (err) {
+                    dispatch(loadableSliceAction.onError(message))
+                }
             }
         }),
         getChatMessages: builder.query<ChatDTO, QueryInput>({
             query: (input: QueryInput) => `/api/db/chat/${input.chatId}`,
-            async onCacheEntryAdded(input, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
+            async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved, dispatch }) {
                 try {
+                    // wait for the initial query to resolve before proceeding
                     await cacheDataLoaded
-                    if (!socket) socket = await connect(input.userId)
-                    socket.on(ChatEvent.Receive, (message: MessageDTO) => {
-                        if (message.chatId === input.chatId) {
-                            updateCachedData(draft => {
-                                draft.messages.push(message)
+                    const method = (message: MessageDTO) => {
+                        if (message.chatId === arg.chatId) {
+                            new Promise(res => setTimeout(res, 1000)).then(n => {
+                                updateCachedData(draft => {
+                                    draft.messages.push(message)
+                                })
+                                dispatch(loadableSliceAction.sendToUser(message))
                             })
                         }
-                    })
+                    }
+                    socket?.on(ChatEvent.Receive, method)
                     await cacheEntryRemoved
-                    socket.off("connect")
-                    socket.off(ChatEvent.Receive)
-                } catch {
-                    // if cacheEntryRemoved resolved before cacheDataLoaded,
-                    // cacheDataLoaded throws
-                }
+                    socket?.off(ChatEvent.Receive, method)
+                } catch {}
             }
         })
     })
 })
 
-export const { useGetChatMessagesQuery, useSendMessageMutation } = signalRApi
+export const { useGetChatMessagesQuery, useSendMessageMutation, useConnectQuery } = signalRApi

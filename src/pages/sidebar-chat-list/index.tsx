@@ -1,9 +1,9 @@
-import { BsCheckAll } from '@react-icons/all-files/bs/BsCheckAll'
-import { UserDTO } from 'common/models/user-models'
-import { getDateString } from 'common/extensions/global-extensions'
-import { ChatListUnit } from '../chat/models/chat'
-import Loading from '../loading'
-import { useGetChatListQuery } from 'api/chat'
+import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
+import { UserDTO } from "common/models/user-models"
+import { getDateString } from "common/extensions/global-extensions"
+import { ChatListUnit } from "../chat/models/chat"
+import Loading from "../loading"
+import { useGetChatListQuery } from "api/chat"
 
 type SidebarChatListProps = {
     user: UserDTO
@@ -22,7 +22,6 @@ const SidebarChatList = (props: SidebarChatListProps) => {
             <div className="chat-list-search">
                 <input placeholder="Поиск..." type="text" />
             </div>
-            {isError ?? error}
             {isLoading && <Loading />}
             {data?.map((x, i) => (
                 <div key={i} className="group chat-user" tabIndex={i} onClick={() => onChatSelected(x)}>
