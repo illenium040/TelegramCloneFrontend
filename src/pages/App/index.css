@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 html {
-    font-family: 'Roboto';
+    font-family: "Roboto";
     font-size: 14px;
 }
 
 .app {
-    background-image: url('../../assets/images/bg.jpg');
+    background-image: url("../../assets/images/bg.jpg");
     background-size: cover;
     background-position: center;
 }
@@ -70,7 +70,7 @@ html {
         min-h-[80px] max-h-[80px]
       focus:bg-sidebar-ico-focus focus:text-white
         cursor-pointer
-        grid grid-cols-4 grid-rows-2 gap-4
+        grid grid-cols-chat-list-unit-col grid-rows-chat-list-unit-row gap-2
         p-4;
     }
 
@@ -132,5 +132,23 @@ html {
     }
     .my-chat-message .chat-message-text-container {
         @apply bg-green-200;
+    }
+
+    .txt {
+        @apply break-words text-ellipsis max-w-[60vw];
+    }
+
+    @media screen and (max-width: 1378px) {
+        .txt {
+            @apply break-words max-w-[50vw];
+        }
+    }
+    @media screen and (max-width: 1070px) {
+        .chat-sidebar-list {
+            @apply absolute left-[100px] w-[calc(100%-100px)];
+        }
+        .sidebar-container {
+            @apply grid grid-cols-side-container-sm;
+        }
     }
 }

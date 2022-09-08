@@ -19,6 +19,12 @@ module.exports = {
       gridTemplateColumns: {
         // Complex site-specific column configuration
         'side-container': '100px 1fr 3fr',
+        'side-container-sm': '100px 1fr',
+        'side-container-xs': '1fr',
+        'chat-list-unit-col': '80px 1fr 3fr 100px'
+      },
+      gridTemplateRows: {
+        'chat-list-unit-row': '30px 30px'
       }
     },
   },

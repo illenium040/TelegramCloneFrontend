@@ -1,5 +1,5 @@
 export const getDateString = (dbDate?: Date) => {
-    if (!dbDate) return ''
+    if (!dbDate) return ""
     var date = new Date(dbDate)
     return `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`
 }
@@ -15,7 +15,7 @@ export const getTime = (date?: Date) => {
 }
 
 export const scrollBottom = (selector: string) => {
-    const scrollable = document.querySelector('.chat-body')
+    const scrollable = document.querySelector(".chat-body")
     scrollable?.scrollTo(0, scrollable.scrollHeight)
 }
 

@@ -4,6 +4,7 @@ import { getDateString } from "common/extensions/global-extensions"
 import { ChatListUnit } from "../chat/models/chat"
 import Loading from "../loading"
 import { useGetChatListQuery } from "api/chat"
+import React, { useRef } from "react"
 
 type SidebarChatListProps = {
     user: UserDTO
@@ -12,7 +13,7 @@ type SidebarChatListProps = {
 
 const SidebarChatList = (props: SidebarChatListProps) => {
     const { onChatSelected, user } = props
-    const { isError, error, isLoading, data } = useGetChatListQuery(user.id)
+    const { isLoading, data } = useGetChatListQuery(user.id)
 
     return (
         <aside
@@ -24,7 +25,14 @@ const SidebarChatList = (props: SidebarChatListProps) => {
             </div>
             {isLoading && <Loading />}
             {data?.map((x, i) => (
-                <div key={i} className="group chat-user" tabIndex={i} onClick={() => onChatSelected(x)}>
+                <div
+                    key={i}
+                    className="group chat-user"
+                    tabIndex={i}
+                    onClick={e => {
+                        onChatSelected(x)
+                    }}
+                >
                     <span className="row-span-2">
                         <img className="chat-image" src={x.user.avatar} alt="" />
                     </span>
@@ -38,8 +46,10 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                         </div>
                     )}
                     {x.lastMessage && (
-                        <span className="col-span-2 text-default-gray group-focus:text-white">
-                            {x.lastMessage?.content}
+                        <span className="w-[calc(100%+100px)] col-span-2 text-default-gray group-focus:text-white">
+                            <div className="text-ellipsis overflow-hidden whitespace-nowrap">
+                                {x.lastMessage?.content}
+                            </div>
                         </span>
                     )}
                     {x.unreadMessagesCount > 0 && (

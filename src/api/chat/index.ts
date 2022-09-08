@@ -1,32 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { serverHost } from "common/constants"
-import { MessageState } from "pages/chat/components/chat-message"
 import { ChatListUnit } from "pages/chat/models/chat"
-import { MessageDTO } from "pages/chat/models/message"
-
-export type LoadableMessage = {
-    message: MessageDTO
-    state: MessageState
-}
+import { MessageDTO, MessageState } from "pages/chat/models/message"
 
 export const loadableSlice = createSlice({
     name: "loadable",
-    initialState: [] as LoadableMessage[],
+    initialState: [] as MessageDTO[],
     reducers: {
         load: (state, payload: PayloadAction<MessageDTO>) => {
-            state.push({ message: payload.payload, state: MessageState.LOADING })
+            state.push(payload.payload)
         },
         sendToServer: (state, payload: PayloadAction<MessageDTO>) => {
-            const index = state.findIndex(x => x.message.id === payload.payload.id)
+            const index = state.findIndex(x => x.id === payload.payload.id)
             if (index > -1) state[index].state = MessageState.SENDED_TO_SERVER
         },
         sendToUser: (state, payload: PayloadAction<MessageDTO>) => {
-            const index = state.findIndex(x => x.message.id === payload.payload.id)
+            const index = state.findIndex(x => x.id === payload.payload.id)
             if (index > -1) state.splice(index, 1)
         },
         onError: (state, payload: PayloadAction<MessageDTO>) => {
-            const index = state.findIndex(x => x.message.id === payload.payload.id)
+            const index = state.findIndex(x => x.id === payload.payload.id)
             if (index > -1) state[index].state = MessageState.ERROR
         }
     }
