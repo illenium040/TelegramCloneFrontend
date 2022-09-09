@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .chat-message {
+        @apply flex flex-row items-end m-1;
+    }
+    .chat-message-avatar {
+        @apply w-[30px];
+    }
+    .chat-message-avatar img {
+        @apply rounded-full object-contain w-[30px];
+    }
+
+    .chat-message-text-container {
+        @apply bg-white p-2 rounded-md m-1
+flex;
+    }
+    .my-chat-message {
+        @apply self-end flex-row-reverse;
+    }
+    .my-chat-message .chat-message-text-container {
+        @apply bg-green-200;
+    }
+
+    .txt {
+        @apply break-words text-ellipsis max-w-[60vw];
+    }
+}

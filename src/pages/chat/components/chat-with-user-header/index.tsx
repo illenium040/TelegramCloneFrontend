@@ -1,13 +1,13 @@
-import { BsSearch } from '@react-icons/all-files/bs/BsSearch'
-import { BsReverseLayoutSidebarReverse } from '@react-icons/all-files/bs/BsReverseLayoutSidebarReverse'
-import { BsThreeDotsVertical } from '@react-icons/all-files/bs/BsThreeDotsVertical'
-
+import { BsSearch } from "@react-icons/all-files/bs/BsSearch"
+import { BsReverseLayoutSidebarReverse } from "@react-icons/all-files/bs/BsReverseLayoutSidebarReverse"
+import { BsThreeDotsVertical } from "@react-icons/all-files/bs/BsThreeDotsVertical"
+import "./chat-header.css"
 const ChatHeader = (props: { userName: string }) => {
     return (
         <div className="chat-header border-gray text-header-bold">
             <div className="flex flex-col w-full">
                 <span>{props.userName}</span>
-                <span className="text-default-gray">{'Был(а) недавно'}</span>
+                <span className="text-default-gray">{"Был(а) недавно"}</span>
             </div>
             <div className="self-end flex flex-row items-center">
                 <BsSearch className="chat-header-icon " />

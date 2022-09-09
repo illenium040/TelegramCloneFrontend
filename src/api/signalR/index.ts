@@ -12,7 +12,7 @@ export enum ChatEvent {
     Read = "ReadMessages"
 }
 
-let socket: HubConnection
+export let socket: HubConnection
 
 async function connect(userId: string) {
     const hub = new HubConnectionBuilder()
@@ -85,12 +85,10 @@ export const signalRApi = createApi({
                         if (message.chatId === arg.chatId) {
                             dispatch(loadableSliceAction.sendToUser(message))
                             updateCachedData(draft => {
-                                message.state = MessageState.SENDED_TO_USER
                                 draft.messages.push(message)
                             })
                         }
                     }
-
                     const onRead = (messagesId: string[], chatId: string, targetUserId: string) => {
                         if (arg.chatId === chatId) {
                             console.log("ReadCallback")

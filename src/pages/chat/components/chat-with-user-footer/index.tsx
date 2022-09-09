@@ -1,16 +1,16 @@
-import { FiPaperclip } from '@react-icons/all-files/fi/FiPaperclip'
-import { VscSmiley } from '@react-icons/all-files/vsc/VscSmiley'
-
+import { FiPaperclip } from "@react-icons/all-files/fi/FiPaperclip"
+import { VscSmiley } from "@react-icons/all-files/vsc/VscSmiley"
+import "./chat-footer.css"
 type ChatFooterProps = {
     onMessageSubmit: (msg: string) => void
 }
 
 export const ChatFooter = (props: ChatFooterProps) => {
     const { onMessageSubmit } = props
-    let message = ''
+    let message = ""
     const onEnterKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            ;(e.target as HTMLInputElement).value = ''
+        if (e.key === "Enter") {
+            ;(e.target as HTMLInputElement).value = ""
             onMessageSubmit(message)
         }
     }

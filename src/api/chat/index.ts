@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
+import { ChatEvent, socket } from "api/signalR"
 import { serverHost } from "common/constants"
 import { ChatListUnit } from "pages/chat/models/chat"
 import { MessageDTO, MessageState } from "pages/chat/models/message"
@@ -31,7 +32,31 @@ export const chatApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: serverHost }),
     endpoints: build => ({
         getChatList: build.query<ChatListUnit[], string>({
-            query: (userId: string) => `/api/db/chatlist/${userId}`
+            query: (userId: string) => `/api/db/chatlist/${userId}`,
+            async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
+                await cacheDataLoaded
+                socket.on(ChatEvent.Receive, (message: MessageDTO) => {
+                    updateCachedData(d => {
+                        const curChat = d.find(x => x.chatId === message.chatId)
+                        if (curChat) {
+                            message.state = MessageState.SENDED_TO_USER
+                            curChat.lastMessage = message
+                            if (message.userIdTo !== curChat.user.id) {
+                                curChat.unreadMessagesCount += 1
+                            }
+                        }
+                    })
+                })
+                socket.on(ChatEvent.Read, (messsageIds: string[], chatId: string, targetUserId: string) => {
+                    updateCachedData(d => {
+                        const curChat = d.find(x => x.chatId === chatId)
+                        if (curChat) {
+                            if (targetUserId === curChat.user.id) curChat.unreadMessagesCount -= messsageIds.length
+                        }
+                    })
+                })
+                await cacheEntryRemoved
+            }
         })
     })
 })

@@ -1,3 +1,4 @@
+import "./sidebar.css"
 import { BsFillChatFill } from "@react-icons/all-files/bs/BsFillChatFill"
 import { BsJustify } from "@react-icons/all-files/bs/BsJustify"
 import { BsFolder } from "@react-icons/all-files/bs/BsFolder"
@@ -17,7 +18,7 @@ const Sidebar = () => {
     ]
     const ids = ["", "all-chats", "private", ""]
     return (
-        <aside className="min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">
+        <aside className="z-50  min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">
             <div className="overflow-y-auto dark:bg-gray-800">
                 <ul className="space-y-2">
                     {icons.map((x, i) => (

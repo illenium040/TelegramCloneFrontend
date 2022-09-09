@@ -1,0 +1,10 @@
+.chat {
+    @apply bg-transparent flex flex-col w-full h-screen;
+}
+
+.chat-body {
+    @apply h-full overflow-auto;
+}
+.chat-body-scrollable {
+    @apply h-full w-full;
+}

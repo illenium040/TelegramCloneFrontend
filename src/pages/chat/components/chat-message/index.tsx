@@ -2,10 +2,9 @@ import { getDateString } from "common/extensions/global-extensions"
 import { UserDTO } from "common/models/user-models"
 import { MessageDTO, MessageState } from "pages/chat/models/message"
 import Loading from "pages/loading"
-
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck"
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
-
+import "./chat-message.css"
 export type MessageProps = {
     message: MessageDTO
     userFrom: UserDTO

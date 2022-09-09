@@ -1,3 +1,4 @@
+import "./chat.css"
 import ChatHeader from "../chat-with-user-header"
 import { UserDTO } from "common/models/user-models"
 import { ChatListUnit } from "pages/chat/models/chat"

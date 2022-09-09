@@ -2,7 +2,7 @@ import { useState } from "react"
 import { UserDTO } from "common/models/user-models"
 import { ChatListUnit } from "./models/chat"
 import ChatWithUser from "./components/chat-with-user"
-import SidebarChatList from "../sidebar-chat-list"
+import SidebarChatList from "./components/sidebar-chat-list"
 import { useConnectQuery } from "api/signalR"
 import Loading from "pages/loading"
 
