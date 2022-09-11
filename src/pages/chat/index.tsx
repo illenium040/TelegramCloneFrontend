@@ -1,17 +1,13 @@
-import { useState } from "react"
-import { UserDTO } from "common/models/user-models"
+import { useContext, useState } from "react"
 import { ChatListUnit } from "./models/chat"
 import ChatWithUser from "./components/chat-with-user"
 import SidebarChatList from "./components/sidebar-chat-list"
 import { useConnectQuery } from "api/signalR"
 import Loading from "pages/loading"
+import { AppContext } from "pages/App"
 
-type ChatContainerProps = {
-    user: UserDTO
-}
-
-const ChatContainer = (props: ChatContainerProps) => {
-    const { user } = props
+const ChatContainer = () => {
+    const user = useContext(AppContext)
     const { isLoading } = useConnectQuery(user.id)
     const [selectedChat, setSelectedChat] = useState<ChatListUnit | null>(null)
 
@@ -21,8 +17,8 @@ const ChatContainer = (props: ChatContainerProps) => {
     if (isLoading) return <Loading />
     return (
         <>
-            <SidebarChatList user={user} onChatSelected={onChatSelected} />
-            {selectedChat && <ChatWithUser currentUser={user} targetChat={selectedChat} />}
+            <SidebarChatList onChatSelected={onChatSelected} />
+            {selectedChat && <ChatWithUser targetChat={selectedChat} />}
         </>
     )
 }

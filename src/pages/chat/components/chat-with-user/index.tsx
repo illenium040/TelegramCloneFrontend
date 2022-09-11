@@ -2,27 +2,28 @@ import "./chat.css"
 import ChatHeader from "../chat-with-user-header"
 import { UserDTO } from "common/models/user-models"
 import { ChatListUnit } from "pages/chat/models/chat"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import Loading from "pages/loading"
 import ChatFooter from "../chat-with-user-footer"
 import Message from "../chat-message"
 import { scrollBottom } from "common/extensions/global-extensions"
 import { useMessaging } from "./hooks/useMessaging"
+import { AppContext } from "pages/App"
 
 type ChatProps = {
-    currentUser: UserDTO
     targetChat: ChatListUnit
 }
 
 const ChatWithUser = (props: ChatProps) => {
-    const { currentUser, targetChat } = props
+    const currentUser = useContext(AppContext)
+    const { targetChat } = props
     const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, targetChat)
 
     useEffect(() => {
         scrollBottom(".chat-body")
     })
 
-    if (messageQuery.isLoading) return <Loading />
+    if (messageQuery.isFetching) return <Loading />
 
     return (
         <div className="chat">

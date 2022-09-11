@@ -4,7 +4,7 @@ import { BsThreeDotsVertical } from "@react-icons/all-files/bs/BsThreeDotsVertic
 import "./chat-header.css"
 const ChatHeader = (props: { userName: string }) => {
     return (
-        <div className="chat-header border-gray text-header-bold">
+        <div className="chat-header border-gray text-header-bold dark:border-dark">
             <div className="flex flex-col w-full">
                 <span>{props.userName}</span>
                 <span className="text-default-gray">{"Был(а) недавно"}</span>

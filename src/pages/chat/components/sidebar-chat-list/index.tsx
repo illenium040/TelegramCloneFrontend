@@ -6,25 +6,29 @@ import { ChatListUnit } from "../../models/chat"
 import Loading from "../../../loading"
 import { useGetChatListQuery } from "api/chat"
 import { useAnimations } from "./hooks/useAnimations"
+import { useContext } from "react"
+import { AppContext } from "pages/App"
 
 type SidebarChatListProps = {
-    user: UserDTO
     onChatSelected: (chat: ChatListUnit) => void
 }
 
 const SidebarChatList = (props: SidebarChatListProps) => {
-    const { onChatSelected, user } = props
+    const user = useContext(AppContext)
+    const { onChatSelected } = props
     const { isLoading, data } = useGetChatListQuery(user.id)
     const { chatClick, chatListRef } = useAnimations()
 
     return (
         <aside
             ref={chatListRef}
-            className="group chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm"
+            className="dark:bg-dark-chat-unit-bg
+             dark:text-gray-200
+             group chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm"
             data-
         >
             <div className="chat-list-search">
-                <input placeholder="Поиск..." type="text" />
+                <input className="dark:bg-dark-sidebar-bg-lighter" placeholder="Поиск..." type="text" />
             </div>
             {isLoading && <Loading />}
             {data?.map((x, i) => (
@@ -44,7 +48,7 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                     {x.lastMessage && (
                         <div className="text-side-gray flex flex-row group-focus:text-white text-sm items-center justify-end">
                             <span className="flex justify-center items-center m-1 group-focus:text-white text-green-400">
-                                <BsCheckAll />
+                                <BsCheckAll className="dark:text-sky-500" />
                             </span>
                             <p>{getDateString(x.lastMessage?.created)}</p>
                         </div>

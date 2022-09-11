@@ -4,6 +4,8 @@ import Sidebar from "../sidebar"
 import "./index.css"
 import "./scrollbar.css"
 import { useGetUserByNameQuery } from "api/user"
+import { createContext } from "react"
+import { UserDTO } from "common/models/user-models"
 
 const getUserNameDBG = () => {
     if (window.location.port === "3000") {
@@ -15,18 +17,27 @@ const getUserNameDBG = () => {
     }
 }
 
+export const AppContext = createContext<UserDTO>({
+    avatar: "",
+    email: "",
+    id: "",
+    name: ""
+})
+
 const App = () => {
     const getUserQuery = useGetUserByNameQuery(getUserNameDBG())
     if (getUserQuery.isError) return <p>{(getUserQuery.error as Error).message}</p>
     if (getUserQuery.isLoading) return <Loading />
     if (!getUserQuery) return <Loading />
     return (
-        <div className="app">
-            <div className="sidebar-container">
-                <Sidebar />
-                <ChatContainer user={getUserQuery.data!} />
+        <AppContext.Provider value={getUserQuery.data!}>
+            <div className="app">
+                <div className="sidebar-container">
+                    <Sidebar />
+                    <ChatContainer />
+                </div>
             </div>
-        </div>
+        </AppContext.Provider>
     )
 }
 

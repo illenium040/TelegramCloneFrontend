@@ -16,7 +16,7 @@ export const ChatFooter = (props: ChatFooterProps) => {
     }
 
     return (
-        <div className="chat-footer border-gray">
+        <div className="chat-footer border-gray dark:border-dark">
             <FiPaperclip className="chat-footer-icon" />
             <input
                 onKeyDown={onEnterKeyDown.bind(this)}

@@ -1,35 +1,9 @@
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { loadableSliceAction } from "api/chat"
 import { serverHost } from "common/constants"
+import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatDTO } from "pages/chat/models/chat"
 import { MessageDTO, MessageState } from "pages/chat/models/message"
-
-export enum ChatEvent {
-    Send = "SendMessage",
-    Receive = "ReceiveMessage",
-    SetHub = "SetUserHub",
-    Read = "ReadMessages"
-}
-
-export let socket: HubConnection
-
-async function connect(userId: string) {
-    const hub = new HubConnectionBuilder()
-        .withUrl(serverHost + "/hubs/notifications")
-        .withAutomaticReconnect()
-        .build()
-    await hub
-        .start()
-        .then(() => {
-            console.log("Connection started")
-        })
-        .catch(err => {
-            console.log("Error while starting connection: " + err)
-        })
-    await hub?.send("SetUserHub", userId).then(x => console.log(`Hub is set for ${hub?.connectionId}!`))
-    return hub
-}
 
 type QueryInput = {
     userId: string
@@ -48,21 +22,18 @@ export const signalRApi = createApi({
         baseUrl: serverHost
     }),
     endpoints: builder => ({
-        connect: builder.query<HubConnection, string>({
+        connect: builder.query<void, string>({
             queryFn: (userId: string) => {
                 return new Promise(resolve => {
-                    if (!socket)
-                        connect(userId).then(hubConnection => {
-                            socket = hubConnection
-                            resolve({ data: socket })
-                        })
+                    if (!WebSocketSignalR.isConnected)
+                        WebSocketSignalR.connect(userId).then(() => resolve({ data: undefined }))
                 })
             }
         }),
         sendMessage: builder.mutation<MessageDTO, MessageDTO>({
             queryFn: (message: MessageDTO) => {
                 return new Promise(async resolve => {
-                    await socket.invoke(ChatEvent.Send, message)
+                    await WebSocketSignalR.socket?.send(WebSocketEvents.Send, message)
                     resolve({ data: message })
                 })
             },
@@ -91,8 +62,6 @@ export const signalRApi = createApi({
                     }
                     const onRead = (messagesId: string[], chatId: string, targetUserId: string) => {
                         if (arg.chatId === chatId) {
-                            console.log("ReadCallback")
-                            console.log(messagesId)
                             updateCachedData(draft => {
                                 for (let id of messagesId) {
                                     let m = draft.messages.find(x => x.id === id)
@@ -103,18 +72,23 @@ export const signalRApi = createApi({
                         }
                     }
 
-                    socket?.on(ChatEvent.Receive, onReceive)
-                    socket?.on(ChatEvent.Read, onRead)
+                    WebSocketSignalR.socket?.on(WebSocketEvents.Receive, onReceive)
+                    WebSocketSignalR.socket?.on(WebSocketEvents.Read, onRead)
                     await cacheEntryRemoved
-                    socket?.off(ChatEvent.Receive, onReceive)
-                    socket?.off(ChatEvent.Read, onRead)
+                    WebSocketSignalR.socket?.off(WebSocketEvents.Receive, onReceive)
+                    WebSocketSignalR.socket?.off(WebSocketEvents.Read, onRead)
                 } catch {}
             }
         }),
         readMessage: builder.mutation<QueryRead, QueryRead>({
             queryFn: (input: QueryRead) => {
                 return new Promise(async resolve => {
-                    await socket.invoke("ReadMessage", input.messagesId, input.chatId, input.userFromId)
+                    await WebSocketSignalR.socket?.invoke(
+                        WebSocketEvents.Read,
+                        input.messagesId,
+                        input.chatId,
+                        input.userFromId
+                    )
                     resolve({ data: input })
                 })
             }

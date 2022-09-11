@@ -30,6 +30,7 @@ export const useMessaging = (currentUser: UserDTO, targetChat: ChatListUnit) => 
     }, [messageQuery.data])
 
     const submitMessage = (val: string) => {
+        if (!val) return
         sendMessage({
             chatId: targetChat.chatId,
             content: val,
@@ -41,6 +42,5 @@ export const useMessaging = (currentUser: UserDTO, targetChat: ChatListUnit) => 
             contentType: MessageContentType.Text
         })
     }
-
     return { submitMessage, messageQuery, loadableMessages }
 }

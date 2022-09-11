@@ -14,14 +14,14 @@
     }
 
     .chat-message-text-container {
-        @apply bg-white p-2 rounded-md m-1
+        @apply bg-white p-2 rounded-md m-1 dark:bg-dark-sidebar-bg-lighter dark:text-gray-200
 flex;
     }
     .my-chat-message {
         @apply self-end flex-row-reverse;
     }
     .my-chat-message .chat-message-text-container {
-        @apply bg-green-200;
+        @apply bg-green-200 dark:bg-dark-chat-unit-focus dark:text-gray-200;
     }
 
     .txt {

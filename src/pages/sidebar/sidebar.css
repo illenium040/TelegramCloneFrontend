@@ -6,7 +6,8 @@
      dark:hover:bg-gray-700 
      flex-col text-sidebar-ico
      focus:bg-sidebar-focus
-     focus:text-sidebar-ico-focus;
+     focus:text-sidebar-ico-focus
+      cursor-pointer;
 }
 .sidebar-ico {
     @apply w-8 h-8 text-sidebar-ico group-focus:text-sidebar-ico-focus;

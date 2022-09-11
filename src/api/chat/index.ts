@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
-import { ChatEvent, socket } from "api/signalR"
 import { serverHost } from "common/constants"
+import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatListUnit } from "pages/chat/models/chat"
 import { MessageDTO, MessageState } from "pages/chat/models/message"
 
@@ -35,7 +35,7 @@ export const chatApi = createApi({
             query: (userId: string) => `/api/db/chatlist/${userId}`,
             async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
                 await cacheDataLoaded
-                socket.on(ChatEvent.Receive, (message: MessageDTO) => {
+                WebSocketSignalR.socket?.on(WebSocketEvents.Receive, (message: MessageDTO) => {
                     updateCachedData(d => {
                         const curChat = d.find(x => x.chatId === message.chatId)
                         if (curChat) {
@@ -47,14 +47,17 @@ export const chatApi = createApi({
                         }
                     })
                 })
-                socket.on(ChatEvent.Read, (messsageIds: string[], chatId: string, targetUserId: string) => {
-                    updateCachedData(d => {
-                        const curChat = d.find(x => x.chatId === chatId)
-                        if (curChat) {
-                            if (targetUserId === curChat.user.id) curChat.unreadMessagesCount -= messsageIds.length
-                        }
-                    })
-                })
+                WebSocketSignalR.socket?.on(
+                    WebSocketEvents.Read,
+                    (messagesIds: string[], chatId: string, targetUserId: string) => {
+                        updateCachedData(d => {
+                            const curChat = d.find(x => x.chatId === chatId)
+                            if (curChat) {
+                                if (targetUserId === curChat.user.id) curChat.unreadMessagesCount -= messagesIds.length
+                            }
+                        })
+                    }
+                )
                 await cacheEntryRemoved
             }
         })

@@ -8,9 +8,9 @@ html {
 }
 
 .app {
-    background-image: url("../../assets/images/bg.jpg");
     background-size: cover;
     background-position: center;
+    @apply bg-light-theme dark:bg-dark-sidebar-bg dark:bg-[url('')];
 }
 
 #root {
@@ -19,7 +19,10 @@ html {
 
 @layer utilities {
     .border-gray {
-        @apply border-gray-200 border-[2px] p-2;
+        @apply border-gray-200 border-[1px] p-2;
+    }
+    .border-dark {
+        @apply border-dark-sidebar-bg border-[1px] p-2;
     }
     .text-header-bold {
         @apply font-semibold text-lg;
@@ -57,4 +60,8 @@ html {
             @apply grid grid-cols-side-container-sm;
         }
     }
+}
+
+.all-shadow {
+    @apply absolute w-full h-full top-0 left-0 bg-black/50 z-50;
 }

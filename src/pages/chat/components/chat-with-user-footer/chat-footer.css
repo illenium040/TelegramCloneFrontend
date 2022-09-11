@@ -1,11 +1,20 @@
-.chat-footer {
-    @apply self-end min-h-[40px] bg-white w-full flex flex-row;
-}
-.chat-input {
-    @apply text-gray-900 text-sm rounded-lg
-  block w-full p-2.5 outline-none;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.chat-footer-icon {
-    @apply rounded-full h-[40px] w-[40px] text-side-gray hover:text-sidebar-ico p-2 font-extralight cursor-pointer;
+@layer components {
+    .chat-footer {
+        @apply self-end min-h-[40px] bg-white w-full flex flex-row
+        dark:bg-dark-chat-unit-bg;
+    }
+    .chat-input {
+        @apply text-gray-900 text-sm rounded-lg
+  block w-full p-2.5 outline-none
+  dark:bg-dark-sidebar-bg-lighter
+  dark:text-gray-200;
+    }
+
+    .chat-footer-icon {
+        @apply rounded-full h-[40px] w-[40px] text-side-gray hover:text-sidebar-ico p-2 font-extralight cursor-pointer;
+    }
 }

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .chat-list-search {
     @apply p-2 w-full h-[45px];
 }
@@ -15,6 +19,8 @@
 
 .chat-user {
     @apply hover:bg-side-chat-hover min-w-full
+    dark:hover:bg-dark-chat-unit-hover
+    dark:focus:bg-dark-chat-unit-focus
     min-h-[80px] max-h-[80px]
   focus:bg-sidebar-ico-focus focus:text-white
     cursor-pointer
@@ -23,5 +29,5 @@
 }
 
 .chat-image {
-    @apply w-[60px] h-[60px] rounded-full object-contain;
+    @apply w-[60px] h-[60px] rounded-full object-cover;
 }
