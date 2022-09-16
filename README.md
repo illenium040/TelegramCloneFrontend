@@ -10,7 +10,8 @@
 ![React](https://img.shields.io/badge/-React-090909?style=for-the-badge&logo=react)
 ![Redux](https://img.shields.io/badge/-Redux-090909?style=for-the-badge&logo=redux)
 ![Tailwind](https://img.shields.io/badge/-tailwind-090909?style=for-the-badge&logo=tailwind)
-
+![HTML5](https://img.shields.io/badge/html5-090909?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-090909?style=for-the-badge&logo=css3&logoColor=white)
 
 ## Дополнительные библиотеки:
 [![AnimeJS](https://img.shields.io/badge/-animejs-090909?style=for-the-badge&logo=animejs)](https://animejs.com/)
