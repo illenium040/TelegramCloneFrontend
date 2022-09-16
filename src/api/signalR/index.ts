@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { loadableSliceAction } from "api/chat"
+import { RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatDTO } from "pages/chat/models/chat"
@@ -19,7 +20,14 @@ type QueryRead = {
 export const signalRApi = createApi({
     reducerPath: "signalRApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: serverHost
+        baseUrl: serverHost,
+        prepareHeaders: (headers, { getState }) => {
+            const token = localStorage.getItem("token")
+            if (token) {
+                headers.set("authorization", `Bearer ${token}`)
+            }
+            return headers
+        }
     }),
     endpoints: builder => ({
         connect: builder.query<void, string>({
@@ -47,8 +55,8 @@ export const signalRApi = createApi({
                 }
             }
         }),
-        getChatMessages: builder.query<ChatDTO, QueryInput>({
-            query: (input: QueryInput) => `/api/db/chat/${input.chatId}`,
+        getChatMessages: builder.query<RequestResult<ChatDTO>, QueryInput>({
+            query: (input: QueryInput) => `/api/chat/messages/${input.chatId}`,
             async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved, dispatch }) {
                 try {
                     await cacheDataLoaded
@@ -56,7 +64,7 @@ export const signalRApi = createApi({
                         if (message.chatId === arg.chatId) {
                             dispatch(loadableSliceAction.sendToUser(message))
                             updateCachedData(draft => {
-                                draft.messages.push(message)
+                                draft.data?.messages.push(message)
                             })
                         }
                     }
@@ -64,7 +72,7 @@ export const signalRApi = createApi({
                         if (arg.chatId === chatId) {
                             updateCachedData(draft => {
                                 for (let id of messagesId) {
-                                    let m = draft.messages.find(x => x.id === id)
+                                    let m = draft.data?.messages.find(x => x.id === id)
                                     if (!m) continue
                                     m.state = MessageState.READ
                                 }

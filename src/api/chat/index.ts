@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
+import { RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatListUnit } from "pages/chat/models/chat"
@@ -29,15 +30,25 @@ export const loadableSlice = createSlice({
 
 export const chatApi = createApi({
     reducerPath: "chatAPI",
-    baseQuery: fetchBaseQuery({ baseUrl: serverHost }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: serverHost,
+        prepareHeaders: (headers, { getState }) => {
+            const token = localStorage.getItem("token")
+            if (token) {
+                headers.set("authorization", `Bearer ${token}`)
+            }
+            return headers
+        }
+    }),
     endpoints: build => ({
-        getChatList: build.query<ChatListUnit[], string>({
-            query: (userId: string) => `/api/db/chatlist/${userId}`,
+        getChatList: build.query<RequestResult<ChatListUnit[]>, string>({
+            query: (userId: string) => `/api/chat/list/${userId}`,
             async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
                 await cacheDataLoaded
                 WebSocketSignalR.socket?.on(WebSocketEvents.Receive, (message: MessageDTO) => {
                     updateCachedData(d => {
-                        const curChat = d.find(x => x.chatId === message.chatId)
+                        if (!d.data) return
+                        const curChat = d.data.find(x => x.chatId === message.chatId)
                         if (curChat) {
                             message.state = MessageState.SENDED_TO_USER
                             curChat.lastMessage = message
@@ -51,7 +62,8 @@ export const chatApi = createApi({
                     WebSocketEvents.Read,
                     (messagesIds: string[], chatId: string, targetUserId: string) => {
                         updateCachedData(d => {
-                            const curChat = d.find(x => x.chatId === chatId)
+                            if (!d.data) return
+                            const curChat = d.data.find(x => x.chatId === chatId)
                             if (curChat) {
                                 if (targetUserId === curChat.user.id) curChat.unreadMessagesCount -= messagesIds.length
                             }

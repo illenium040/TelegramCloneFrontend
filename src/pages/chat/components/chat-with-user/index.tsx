@@ -8,17 +8,17 @@ import ChatFooter from "../chat-with-user-footer"
 import Message from "../chat-message"
 import { scrollBottom } from "common/extensions/global-extensions"
 import { useMessaging } from "./hooks/useMessaging"
-import { AppContext } from "pages/App"
+import { useAuthContext } from "pages/Auth/hooks/useAuth"
 
 type ChatProps = {
     targetChat: ChatListUnit
 }
 
 const ChatWithUser = (props: ChatProps) => {
-    const currentUser = useContext(AppContext)
+    const currentUser = useAuthContext()
     const { targetChat } = props
     const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, targetChat)
-
+    const messages = messageQuery.data?.data?.messages
     useEffect(() => {
         scrollBottom(".chat-body")
     })
@@ -31,7 +31,7 @@ const ChatWithUser = (props: ChatProps) => {
             <div className="chat-body chat-scrollbar">
                 <div className="chat-body-scrollable">
                     <div className="flex flex-col items-start p-2 justify-end w-full">
-                        {messageQuery.data?.messages.concat(loadableMessages).map((x, i) => (
+                        {messages?.concat(loadableMessages).map((x, i) => (
                             <Message key={x.id} message={x} userTo={targetChat.user} userFrom={currentUser} />
                         ))}
                     </div>

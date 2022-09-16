@@ -16,7 +16,8 @@ export const useMessaging = (currentUser: UserDTO, targetChat: ChatListUnit) => 
     useEffect(() => {
         if (messageQuery.isSuccess && !sendState.isLoading) {
             if (readState.isLoading) return
-            const msgID = messageQuery.data.messages
+            const messages = messageQuery.data.data?.messages!
+            const msgID = messages
                 .filter(x => x.state === MessageState.SENDED_TO_USER && x.userIdFrom !== currentUser.id)
                 .map(x => x.id)
             if (msgID.length === 0) return

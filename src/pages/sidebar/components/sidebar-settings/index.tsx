@@ -1,35 +1,35 @@
 import "./settings.css"
 import { useContext, useEffect } from "react"
-import { AppContext } from "pages/App"
 import { FiMoon } from "@react-icons/all-files/fi/FiMoon"
+import { useAuthContext } from "pages/Auth/hooks/useAuth"
 
 const SidebarSettings = (props: { hide: () => void }) => {
     const { hide } = props
-    const user = useContext(AppContext)
+    const user = useAuthContext()
 
     const onDarkMode = () => {
-        if (sessionStorage.getItem("color-theme")) {
-            if (sessionStorage.getItem("color-theme") === "light") {
+        if (localStorage.getItem("color-theme")) {
+            if (localStorage.getItem("color-theme") === "light") {
                 document.documentElement.classList.add("dark")
-                sessionStorage.setItem("color-theme", "dark")
+                localStorage.setItem("color-theme", "dark")
             } else {
                 document.documentElement.classList.remove("dark")
-                sessionStorage.setItem("color-theme", "light")
+                localStorage.setItem("color-theme", "light")
             }
         } else {
             if (document.documentElement.classList.contains("dark")) {
                 document.documentElement.classList.remove("dark")
-                sessionStorage.setItem("color-theme", "light")
+                localStorage.setItem("color-theme", "light")
             } else {
                 document.documentElement.classList.add("dark")
-                sessionStorage.setItem("color-theme", "dark")
+                localStorage.setItem("color-theme", "dark")
             }
         }
     }
 
     useEffect(() => {
-        const x = sessionStorage.getItem("color-theme")
-        if (x && x === "dark" && !document.documentElement.classList.contains(x)) {
+        const x = localStorage.getItem("color-theme")
+        if (x && x === "dark") {
             document.documentElement.classList.add(x)
         }
     })
@@ -39,8 +39,7 @@ const SidebarSettings = (props: { hide: () => void }) => {
             <div id="sidebar-settings" className="all-shadow hidden" onClick={e => hide()}></div>
             <div
                 onClick={e => e.stopPropagation()}
-                className="hidden sidebar-settings flex-col dark:bg-sidebar-focus dark:text-gray-200"
-            >
+                className="hidden sidebar-settings flex-col dark:bg-sidebar-focus dark:text-gray-200">
                 <div className="w-full border-gray-200 border-b-[1px] p-0">
                     <div className="p-5">
                         <div className="w-[70px] h-[70px]">
@@ -62,14 +61,13 @@ const SidebarSettings = (props: { hide: () => void }) => {
                             </span>
                             <label
                                 htmlFor="darkmode-toggle"
-                                className="inline-flex relative items-center cursor-pointer self-center"
-                            >
+                                className="inline-flex relative items-center cursor-pointer self-center">
                                 <input
                                     onClick={e => onDarkMode()}
                                     type="checkbox"
                                     id="darkmode-toggle"
                                     className="sr-only peer outline-none"
-                                    defaultChecked={sessionStorage.getItem("color-theme") === "dark" ? true : false}
+                                    defaultChecked={localStorage.getItem("color-theme") === "dark" ? true : false}
                                 />
                                 <div
                                     className="w-11 h-4 bg-gray-200 outline-none  rounded-full peer
@@ -78,8 +76,7 @@ const SidebarSettings = (props: { hide: () => void }) => {
                                     after:absolute after:top-[-3px] after:left-[-4px]
                                      after:bg-white after:border-gray-300
                                       after:border after:rounded-full after:h-6 after:w-6 after:transition-all
-                                       dark:border-gray-600 peer-checked:bg-blue-600"
-                                ></div>
+                                       dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
                     </div>

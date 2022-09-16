@@ -1,13 +1,13 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { ChatListUnit } from "./models/chat"
 import ChatWithUser from "./components/chat-with-user"
 import SidebarChatList from "./components/sidebar-chat-list"
 import { useConnectQuery } from "api/signalR"
 import Loading from "pages/loading"
-import { AppContext } from "pages/App"
+import { useAuthContext } from "pages/Auth/hooks/useAuth"
 
 const ChatContainer = () => {
-    const user = useContext(AppContext)
+    const user = useAuthContext()
     const { isLoading } = useConnectQuery(user.id)
     const [selectedChat, setSelectedChat] = useState<ChatListUnit | null>(null)
 
