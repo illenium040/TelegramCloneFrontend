@@ -17,3 +17,13 @@
 ![SignalR](https://img.shields.io/badge/-SignalR-090909?style=for-the-badge&logo=signalr)
 ![ReduxToolkit](https://img.shields.io/badge/-ReduxToolkit-090909?style=for-the-badge&logo=redux)
 ![JQuery](https://img.shields.io/badge/-JQuery-090909?style=for-the-badge&logo=jquery)
+
+## DarkMode
+![gif](https://github.com/illenium040/TelegramCloneFrontend/blob/master/readme/darkmode.gif?raw=true)
+
+## Login
+![gif](https://github.com/illenium040/TelegramCloneFrontend/blob/master/readme/login.gif?raw=true)
+
+### На данный момент работаю над:
+- Расширение API
+- Безопасность пересылки сообщений и вызова API
