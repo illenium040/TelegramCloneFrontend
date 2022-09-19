@@ -43,7 +43,7 @@ const SidebarSettings = (props: { hide: () => void }) => {
                 <div className="w-full border-gray-200 border-b-[1px] p-0">
                     <div className="p-5">
                         <div className="w-[70px] h-[70px]">
-                            <img className="rounded-full" src={user.avatar} alt="" />
+                            <img className="rounded-full" src={user.avatar ?? "/images/default-avatar.png"} alt="" />
                         </div>
                         <div className="font-semibold pt-2">
                             <span>{user.name}</span>

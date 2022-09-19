@@ -1,11 +1,12 @@
 import { UserDTO } from "common/models/user-models"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext } from "react"
 
 export const AuthContext = createContext<UserDTO>({
     avatar: "",
     email: "",
     id: "",
-    name: ""
+    name: "",
+    loginName: ""
 })
 
 export const useAuthContext = () => {

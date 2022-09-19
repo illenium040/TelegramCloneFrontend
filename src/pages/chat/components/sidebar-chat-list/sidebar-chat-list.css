@@ -2,32 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-.chat-list-search {
-    @apply p-2 w-full h-[45px];
-}
-.chat-list-search input {
-    @apply w-full rounded-md bg-gray-200
-  p-2
-  focus:bg-white
-  focus:outline-sky-500;
-}
+@layer components {
+    .chat-list-search {
+        @apply p-2 w-full h-[45px];
+    }
+    .chat-list-search input {
+        @apply w-full rounded-md bg-gray-200 p-2
+        dark:dark:bg-dark-chat-unit-bg
+        dark:focus:bg-dark-sidebar-bg-lighter
+        focus:bg-white
+        focus:outline-sky-500;
+    }
 
-.chat-sidebar-list {
-    @apply h-screen bg-white min-w-[250px] w-full max-w-[460px]
-    overflow-auto;
-}
+    .chat-sidebar-list {
+        @apply h-screen bg-white min-w-[250px] w-full max-w-[460px]
+        overflow-auto;
+    }
 
-.chat-user {
-    @apply hover:bg-side-chat-hover min-w-full
-    dark:hover:bg-dark-chat-unit-hover
-    dark:focus:bg-dark-chat-unit-focus
-    min-h-[80px] max-h-[80px]
-  focus:bg-sidebar-ico-focus focus:text-white
-    cursor-pointer
-    grid grid-cols-chat-list-unit-col grid-rows-chat-list-unit-row gap-2
-    p-4;
-}
+    .chat-user {
+        @apply hover:bg-side-chat-hover min-w-full
+        dark:hover:bg-dark-chat-unit-hover
+        dark:focus:bg-dark-chat-unit-focus
+        min-h-[80px] max-h-[80px]
+      focus:bg-sidebar-ico-focus focus:text-white
+        cursor-pointer
+        grid grid-cols-chat-list-unit-col grid-rows-chat-list-unit-row gap-2
+        p-4;
+    }
 
-.chat-image {
-    @apply w-[60px] h-[60px] rounded-full object-cover;
+    .chat-image {
+        @apply w-[60px] h-[60px] rounded-full object-cover;
+    }
 }

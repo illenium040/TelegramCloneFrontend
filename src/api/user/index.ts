@@ -13,7 +13,6 @@ type RegisterQuery = {
     displayName: string
     password: string
 }
-
 export const userApi = createApi({
     reducerPath: "userAPI",
     baseQuery: fetchBaseQuery({
@@ -43,8 +42,19 @@ export const userApi = createApi({
                 url: `/api/user/register`,
                 method: "POST"
             })
+        }),
+        search: build.query<RequestResult<UserDTO[]> | undefined, string>({
+            async queryFn(userName: string, api, options, baseQuery) {
+                if (!userName) return { data: undefined }
+                if (userName.trim().length === 0) return { data: undefined }
+                const result = await baseQuery({
+                    url: `/api/user/search/${userName}`,
+                    method: "GET"
+                })
+                return { data: result.data as RequestResult<UserDTO[]> }
+            }
         })
     })
 })
 
-export const { useGetUserByNameQuery, useLoginMutation, useRegisterMutation } = userApi
+export const { useGetUserByNameQuery, useLoginMutation, useRegisterMutation, useSearchQuery } = userApi

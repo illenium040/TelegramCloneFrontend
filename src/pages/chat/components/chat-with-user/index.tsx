@@ -19,6 +19,7 @@ const ChatWithUser = (props: ChatProps) => {
     const { targetChat } = props
     const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, targetChat)
     const messages = messageQuery.data?.data?.messages
+
     useEffect(() => {
         scrollBottom(".chat-body")
     })

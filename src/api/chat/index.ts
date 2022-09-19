@@ -28,6 +28,16 @@ export const loadableSlice = createSlice({
     }
 })
 
+type DeleteQuery = {
+    userId: string
+    chatId: string
+}
+
+type CreateQuery = {
+    userId: string
+    withUserId: string
+}
+
 export const chatApi = createApi({
     reducerPath: "chatAPI",
     baseQuery: fetchBaseQuery({
@@ -41,8 +51,22 @@ export const chatApi = createApi({
         }
     }),
     endpoints: build => ({
+        addChat: build.mutation<RequestResult<string>, CreateQuery>({
+            query: queryBody => ({
+                url: `/api/chat/add`,
+                body: queryBody,
+                method: "POST"
+            })
+        }),
+        deleteChat: build.mutation<RequestResult<string>, DeleteQuery>({
+            query: queryBody => ({
+                url: `/api/chat/delete`,
+                body: queryBody,
+                method: "POST"
+            })
+        }),
         getChatList: build.query<RequestResult<ChatListUnit[]>, string>({
-            query: (userId: string) => `/api/chat/list/${userId}`,
+            query: userId => `/api/chat/list/${userId}`,
             async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
                 await cacheDataLoaded
                 WebSocketSignalR.socket?.on(WebSocketEvents.Receive, (message: MessageDTO) => {
@@ -76,6 +100,6 @@ export const chatApi = createApi({
     })
 })
 
-export const { useGetChatListQuery } = chatApi
+export const { useGetChatListQuery, useAddChatMutation, useDeleteChatMutation } = chatApi
 export const loadableSliceAction = loadableSlice.actions
 export const loadableSliceReducer = loadableSlice.reducer

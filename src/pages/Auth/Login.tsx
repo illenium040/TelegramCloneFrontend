@@ -21,7 +21,8 @@ const Login = () => {
                 avatar: loginState.data?.data?.avatar,
                 email: loginState.data?.data?.email,
                 id: loginState.data?.data?.id,
-                name: loginState.data?.data?.name
+                name: loginState.data?.data?.displayName,
+                loginName: loginState.data?.data?.loginName
             } as UserDTO)
         )
         localStorage.setItem("token", loginState.data?.data?.token!)
