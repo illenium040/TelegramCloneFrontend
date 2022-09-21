@@ -1,5 +1,5 @@
+import { Sidebar } from "pages/Sidebar"
 import ChatContainer from "../chat"
-import Sidebar from "../sidebar"
 import "./index.css"
 import "./scrollbar.css"
 

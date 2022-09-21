@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .menu-container {
+        @apply top-0 w-full h-full absolute;
+    }
+    .menu {
+        @apply relative bg-dark-chat-unit-bg w-[0px] h-0 rounded-lg pt-[10px]
+        dark:text-gray-200
+        shadow-xl
+        overflow-auto
+        overflow-y-hidden
+        overflow-x-hidden
+        shadow-black;
+    }
+    .menu li {
+        @apply p-2 pl-5 cursor-pointer flex items-center;
+    }
+
+    .menu li:hover {
+        @apply dark:bg-dark-sidebar-bg-lighter;
+    }
+}

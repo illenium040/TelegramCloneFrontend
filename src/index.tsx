@@ -3,9 +3,7 @@ import App from "./pages/App"
 import { Provider } from "react-redux"
 import { store } from "./api"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { Auth } from "pages/Auth/Auth"
-import Login from "pages/Auth/Login"
-import { Register } from "pages/Auth/Register"
+import { Auth, Login, Register } from "pages/Auth"
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 

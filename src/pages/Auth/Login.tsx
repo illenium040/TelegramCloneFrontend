@@ -2,7 +2,7 @@ import { useLoginMutation } from "api/user"
 import { UserDTO } from "common/models/user-models"
 import { Navigate, useNavigate } from "react-router-dom"
 
-const Login = () => {
+export const Login = () => {
     const navigate = useNavigate()
     const [login, loginState] = useLoginMutation()
     const handleLogin = async () => {
@@ -75,5 +75,3 @@ const Login = () => {
         </main>
     )
 }
-
-export default Login

@@ -1,19 +1,26 @@
 import { useState } from "react"
-import { ChatListUnit } from "./models/chat"
 import ChatWithUser from "./components/chat-with-user"
-import SidebarChatList from "./components/sidebar-chat-list"
 import { useConnectQuery } from "api/signalR"
-import Loading from "pages/loading"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { useAddChatMutation } from "api/chat"
+import WebSocketSignalR, { WSChatListEvents } from "common/websocket"
+import SidebarChatList from "./components/sidebar-chat-list"
+import { ChatView } from "./types"
+import { Loading } from "pages/Loading"
 
 const ChatContainer = () => {
     const user = useAuthContext()
     const { isLoading } = useConnectQuery(user.id)
-    const [selectedChat, setSelectedChat] = useState<ChatListUnit | null>(null)
+    const [selectedChat, setSelectedChat] = useState<ChatView | null>(null)
     const [addChat, addChatState] = useAddChatMutation()
 
-    const onChatSelected = async (u: ChatListUnit) => {
+    const onChatDeleted = (u: ChatView) => {
+        if (u.chatId === selectedChat?.chatId) {
+            setSelectedChat(null)
+        }
+    }
+
+    const onChatSelected = async (u: ChatView) => {
         if (u.chatId.startsWith("search_")) {
             const result = await addChat({
                 userId: user.id,
@@ -21,6 +28,7 @@ const ChatContainer = () => {
             }).unwrap()
             if (result.succeeded) {
                 u.chatId = result.data!
+                await WebSocketSignalR.socket?.send(WSChatListEvents.Add, u)
             }
         }
         setSelectedChat(u)
@@ -29,7 +37,7 @@ const ChatContainer = () => {
     if (isLoading) return <Loading />
     return (
         <>
-            <SidebarChatList onChatSelected={onChatSelected} />
+            <SidebarChatList onChatSelected={onChatSelected} onChatDeleted={onChatDeleted} />
             {addChatState.isLoading && <Loading />}
             {selectedChat && <ChatWithUser targetChat={selectedChat} />}
         </>

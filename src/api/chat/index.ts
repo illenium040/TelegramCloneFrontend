@@ -2,9 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
-import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
-import { ChatListUnit } from "pages/chat/models/chat"
-import { MessageDTO, MessageState } from "pages/chat/models/message"
+import WebSocketSignalR, { WebSocketEvents, WSChatListEvents } from "common/websocket"
+import { ChatView, MessageDTO, MessageState } from "pages/chat/types"
 
 export const loadableSlice = createSlice({
     name: "loadable",
@@ -65,13 +64,16 @@ export const chatApi = createApi({
                 method: "POST"
             })
         }),
-        getChatList: build.query<RequestResult<ChatListUnit[]>, string>({
+        getChatList: build.query<RequestResult<ChatView[]>, string>({
             query: userId => `/api/chat/list/${userId}`,
             async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
                 await cacheDataLoaded
-                WebSocketSignalR.socket?.on(WebSocketEvents.Receive, (message: MessageDTO) => {
+                WebSocketSignalR.socket?.on(WebSocketEvents.Receive, (message: MessageDTO, unit?: ChatView) => {
                     updateCachedData(d => {
                         if (!d.data) return
+                        if (unit) {
+                            d.data.push(unit)
+                        }
                         const curChat = d.data.find(x => x.chatId === message.chatId)
                         if (curChat) {
                             message.state = MessageState.SENDED_TO_USER
@@ -94,6 +96,25 @@ export const chatApi = createApi({
                         })
                     }
                 )
+
+                WebSocketSignalR.socket?.on(WSChatListEvents.Add, (chat: ChatView) => {
+                    updateCachedData(d => {
+                        const c = d.data?.findIndex(x => x.chatId === chat.chatId)
+                        if (c && c === -1) {
+                            d.data?.push(chat)
+                        }
+                    })
+                })
+                WebSocketSignalR.socket?.on(WSChatListEvents.Delete, (chat: ChatView) => {
+                    updateCachedData(d => {
+                        if (!d.data) return
+                        const c = d.data?.findIndex(x => x.chatId === chat.chatId)
+                        if (c > -1) {
+                            d.data?.splice(c, 1)
+                        }
+                    })
+                })
+
                 await cacheEntryRemoved
             }
         })

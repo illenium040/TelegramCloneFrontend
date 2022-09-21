@@ -8,6 +8,11 @@ export enum WebSocketEvents {
     Read = "ReadMessage"
 }
 
+export enum WSChatListEvents {
+    Add = "AddToChatList",
+    Delete = "DeleteFromChatList"
+}
+
 abstract class WebSocketSignalR {
     static socket?: HubConnection
     static get isConnected() {

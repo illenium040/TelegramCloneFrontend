@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react"
 import { FiMoon } from "@react-icons/all-files/fi/FiMoon"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 
-const SidebarSettings = (props: { hide: () => void }) => {
+export const SidebarSettings = (props: { hide: () => void }) => {
     const { hide } = props
     const user = useAuthContext()
 
@@ -90,5 +90,3 @@ const SidebarSettings = (props: { hide: () => void }) => {
         </>
     )
 }
-
-export default SidebarSettings

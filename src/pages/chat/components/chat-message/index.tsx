@@ -1,10 +1,10 @@
+import "./chat-message.css"
 import { getDateString } from "common/extensions/global-extensions"
 import { UserDTO } from "common/models/user-models"
-import { MessageDTO, MessageState } from "pages/chat/models/message"
-import Loading from "pages/loading"
+import { Loading } from "pages/Loading"
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck"
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
-import "./chat-message.css"
+import { MessageDTO, MessageState } from "pages/chat/types"
 export type MessageProps = {
     message: MessageDTO
     userFrom: UserDTO
@@ -18,7 +18,7 @@ const Message = (props: MessageProps) => {
     return (
         <div className={`chat-message ${isMyMessage && "my-chat-message"}`}>
             <span className="chat-message-avatar">
-                <img src={me.avatar} alt="" />
+                <img src={me.avatar ?? "/images/default-avatar.png"} alt="" />
             </span>
             <div className="chat-message-text-container">
                 <div className="txt">

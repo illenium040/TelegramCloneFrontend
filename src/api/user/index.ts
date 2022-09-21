@@ -29,6 +29,12 @@ export const userApi = createApi({
         getUserByName: build.query<UserLoggedIn, string>({
             query: (userName: string) => `/api/user/${userName}`
         }),
+        isValid: build.mutation<RequestResult, void>({
+            query: () => ({
+                url: "api/user/validate",
+                method: "POST"
+            })
+        }),
         login: build.mutation<RequestResult<UserLoggedIn>, LoginQuery>({
             query: (q: LoginQuery) => ({
                 body: q,
@@ -57,4 +63,5 @@ export const userApi = createApi({
     })
 })
 
-export const { useGetUserByNameQuery, useLoginMutation, useRegisterMutation, useSearchQuery } = userApi
+export const { useGetUserByNameQuery, useLoginMutation, useRegisterMutation, useSearchQuery, useIsValidMutation } =
+    userApi

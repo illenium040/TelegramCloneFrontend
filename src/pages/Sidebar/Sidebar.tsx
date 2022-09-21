@@ -3,17 +3,18 @@ import { BsFillChatFill } from "@react-icons/all-files/bs/BsFillChatFill"
 import { BsJustify } from "@react-icons/all-files/bs/BsJustify"
 import { BsFolder } from "@react-icons/all-files/bs/BsFolder"
 import { BsGear } from "@react-icons/all-files/bs/BsGear"
+import { SidebarSettings } from "./components/SidebarSettings"
 import React from "react"
-import SidebarSettings from "./components/sidebar-settings"
 import anime from "animejs"
 import $ from "jquery"
+
 type SidebarIcon = {
     icon: JSX.Element
     anchoredText?: string
     click?: () => void
 }
 
-const Sidebar = () => {
+export const Sidebar = () => {
     const toggleSettingsVision = (isVisible: boolean) => {
         const main = document.querySelector(".sidebar-settings")
         const shadowContainer = document.querySelector("#sidebar-settings")
@@ -74,5 +75,3 @@ const Sidebar = () => {
         </React.Fragment>
     )
 }
-
-export default Sidebar

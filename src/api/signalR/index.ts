@@ -3,8 +3,7 @@ import { loadableSliceAction } from "api/chat"
 import { RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
-import { ChatDTO } from "pages/chat/models/chat"
-import { MessageDTO, MessageState } from "pages/chat/models/message"
+import { ChatDTO, MessageDTO, MessageState } from "pages/chat/types"
 
 type QueryInput = {
     userId: string

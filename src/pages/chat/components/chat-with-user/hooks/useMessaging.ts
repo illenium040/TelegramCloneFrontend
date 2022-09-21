@@ -1,12 +1,11 @@
 import { useTypedSelector } from "api"
 import { useGetChatMessagesQuery, useReadMessageMutation, useSendMessageMutation } from "api/signalR"
 import { UserDTO } from "common/models/user-models"
-import { ChatListUnit } from "pages/chat/models/chat"
-import { MessageContentType, MessageState } from "pages/chat/models/message"
+import { ChatView, MessageContentType, MessageState } from "pages/chat/types"
 import { useEffect, useMemo } from "react"
 import { v4 } from "uuid"
 
-export const useMessaging = (currentUser: UserDTO, targetChat: ChatListUnit) => {
+export const useMessaging = (currentUser: UserDTO, targetChat: ChatView) => {
     const messageQuery = useGetChatMessagesQuery({ chatId: targetChat.chatId, userId: currentUser.id })
     const [sendMessage, sendState] = useSendMessageMutation()
     const [readMessage, readState] = useReadMessageMutation()

@@ -1,5 +1,4 @@
 import { useRegisterMutation } from "api/user"
-import Loading from "pages/loading"
 import { useNavigate } from "react-router-dom"
 
 export const Register = () => {

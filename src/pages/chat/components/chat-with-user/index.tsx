@@ -1,17 +1,16 @@
 import "./chat.css"
 import ChatHeader from "../chat-with-user-header"
-import { UserDTO } from "common/models/user-models"
-import { ChatListUnit } from "pages/chat/models/chat"
-import { useContext, useEffect } from "react"
-import Loading from "pages/loading"
+import { Loading } from "pages/Loading"
 import ChatFooter from "../chat-with-user-footer"
 import Message from "../chat-message"
 import { scrollBottom } from "common/extensions/global-extensions"
 import { useMessaging } from "./hooks/useMessaging"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
+import { ChatView } from "pages/chat/types"
+import { useEffect } from "react"
 
 type ChatProps = {
-    targetChat: ChatListUnit
+    targetChat: ChatView
 }
 
 const ChatWithUser = (props: ChatProps) => {
