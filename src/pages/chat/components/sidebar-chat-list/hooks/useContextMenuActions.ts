@@ -2,30 +2,42 @@ import { useDeleteChatMutation } from "api/chat"
 import WebSocketSignalR, { WSChatListEvents } from "common/websocket"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { ChatView } from "pages/chat/types"
-import { SidebarChatListProps } from "../types"
 
-export const useContextMenuActions = (props: SidebarChatListProps, data: ChatView[]) => {
-    const { onChatDeleted, onChatSelected } = props
-    const [deleteChat, deleteChatState] = useDeleteChatMutation()
+export const useContextMenuActions = () => {
     const user = useAuthContext()
-    const handleDeletion = async (element: HTMLElement) => {
-        const id = element.id
-        const index = data.findIndex(x => x.chatId === id)
-        if (index === -1) {
-            console.log("There is no any chat")
-            return
-        }
-        const c = data[index!]
-        deleteChat({
-            chatId: c?.chatId!,
+    const [deleteChat] = useDeleteChatMutation()
+
+    const remove = (view: ChatView) => {
+        return deleteChat({
+            chatId: view.chatId,
             userId: user.id
         })
             .unwrap()
             .then(x => {
-                WebSocketSignalR.socket?.send(WSChatListEvents.Delete, c)
-                onChatDeleted(c!)
+                WebSocketSignalR.socket?.send(WSChatListEvents.Delete, view)
             })
     }
+    const archive = () => {
+        console.log("Archived")
+    }
+    const addToFolder = () => {
+        console.log("Added to folder")
+    }
+    const block = () => {
+        console.log("Blocked")
+    }
+    const clearStory = () => {
+        console.log("Story is cleared")
+    }
+    const markAsUnread = () => {
+        console.log("Marked as unread")
+    }
+    const turnOnNotifications = () => {
+        console.log("Notifications are turned on")
+    }
+    const unpin = () => {
+        console.log("Unpinned")
+    }
 
-    return { handleDeletion }
+    return { remove, archive, addToFolder, block, clearStory, markAsUnread, turnOnNotifications, unpin }
 }

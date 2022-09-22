@@ -4,7 +4,7 @@
 
 @layer components {
     .menu-container {
-        @apply top-0 w-full h-full absolute;
+        @apply top-0 left-0 w-full h-full absolute z-50;
     }
     .menu {
         @apply relative bg-dark-chat-unit-bg w-[0px] h-0 rounded-lg pt-[10px]
@@ -16,7 +16,7 @@
         shadow-black;
     }
     .menu li {
-        @apply p-2 pl-5 cursor-pointer flex items-center;
+        @apply p-2 pl-5 cursor-pointer flex items-center opacity-0;
     }
 
     .menu li:hover {

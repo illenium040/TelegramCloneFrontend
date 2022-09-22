@@ -1,1 +1,1 @@
-export { ContextChatListMenu } from "./ContextChatListMenu"
+export { ChatListContextMenu as ContextChatListMenu } from "./ChatListContextMenu"

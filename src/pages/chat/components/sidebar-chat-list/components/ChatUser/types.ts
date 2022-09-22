@@ -3,7 +3,7 @@ import { ChatView } from "pages/chat/types"
 export type ChatUserProps = {
     unit: ChatView
     chatType: ChatViewType
-    handleClick: () => void
+    handleClick: (view: ChatView) => void
     handleDelete?: (element: HTMLElement) => void
 }
 

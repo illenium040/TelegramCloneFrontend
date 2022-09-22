@@ -8,6 +8,8 @@ import { useMessaging } from "./hooks/useMessaging"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { ChatView } from "pages/chat/types"
 import { useEffect } from "react"
+import { MessageContext } from "pages/ContextMenu/hooks/useContextMenu"
+import { MessageContextMenu } from "pages/ContextMenu/MessageContextMenu"
 
 type ChatProps = {
     targetChat: ChatView
@@ -38,6 +40,15 @@ const ChatWithUser = (props: ChatProps) => {
                 </div>
             </div>
             <ChatFooter onMessageSubmit={submitMessage} />
+            <MessageContext.Provider
+                value={{
+                    data: messages?.concat(loadableMessages),
+                    elementClassName: "chat-message",
+                    height: 265,
+                    width: 180
+                }}>
+                <MessageContextMenu />
+            </MessageContext.Provider>
         </div>
     )
 }

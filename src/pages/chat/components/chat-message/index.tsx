@@ -16,7 +16,7 @@ const Message = (props: MessageProps) => {
     const isMyMessage = message.userIdFrom === userFrom.id
     const me = isMyMessage ? userFrom : userTo
     return (
-        <div className={`chat-message ${isMyMessage && "my-chat-message"}`}>
+        <div id={message.id} className={`chat-message ${isMyMessage && "my-chat-message"}`}>
             <span className="chat-message-avatar">
                 <img src={me.avatar ?? "/images/default-avatar.png"} alt="" />
             </span>

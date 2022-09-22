@@ -1,5 +1,5 @@
 import "./sidebar-chat-list.css"
-import { useDeleteChatMutation, useGetChatListQuery } from "api/chat"
+import { useGetChatListQuery } from "api/chat"
 import { useAnimations } from "./hooks/useAnimations"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { ChatSearch } from "./components/ChatSearch"
@@ -11,13 +11,15 @@ import { ContextChatListMenu } from "pages/ContextMenu"
 import { ChatViewType } from "./components/ChatUser/types"
 import { ChatView } from "pages/chat/types"
 import { SidebarChatListProps } from "./types"
+import { ChatListContext } from "pages/ContextMenu/hooks/useContextMenu"
 import { useContextMenuActions } from "./hooks/useContextMenuActions"
 
 const SidebarChatList = (props: SidebarChatListProps) => {
     const user = useAuthContext()
-    const { onChatSelected } = props
+    const { onChatSelected, onChatDeleted } = props
+    const { addToFolder, archive, block, clearStory, markAsUnread, remove, turnOnNotifications, unpin } =
+        useContextMenuActions()
     const { isFetching, data } = useGetChatListQuery(user.id)
-    const { handleDeletion } = useContextMenuActions(props, data?.data!)
     const { chatClick, chatListRef } = useAnimations()
     const [users, setUsers] = useState<UserDTO[]>([])
 
@@ -39,18 +41,17 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                 <ChatSearch handleSearchData={handleSearchData} />
                 {users.length > 0 &&
                     users.map((x, i) => {
-                        const unit = {
-                            chatId: `search_${i}`,
-                            unreadMessagesCount: 0,
-                            user: x,
-                            lastMessage: undefined
-                        }
                         return (
                             <ChatUser
                                 chatType={ChatViewType.OnSearch}
                                 key={x.id}
-                                handleClick={() => handleChatUserClick(unit)}
-                                unit={unit}
+                                handleClick={handleChatUserClick}
+                                unit={{
+                                    chatId: `search_${i}`,
+                                    unreadMessagesCount: 0,
+                                    user: x,
+                                    lastMessage: undefined
+                                }}
                             />
                         )
                     })}
@@ -61,12 +62,24 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                         <ChatUser
                             chatType={ChatViewType.My}
                             key={x.chatId}
-                            handleClick={() => handleChatUserClick(x)}
+                            handleClick={handleChatUserClick}
                             unit={x}
                         />
                     ))}
             </aside>
-            <ContextChatListMenu onDelete={handleDeletion} />
+            <ChatListContext.Provider
+                value={{ data: data?.data, elementClassName: ChatViewType.My, height: 300, width: 270 }}>
+                <ContextChatListMenu
+                    onArchive={archive}
+                    onAddToFolder={addToFolder}
+                    onBlock={block}
+                    onClearStory={clearStory}
+                    onMarkAsUnread={markAsUnread}
+                    onTurnOnNotifications={turnOnNotifications}
+                    onUnpin={unpin}
+                    onDelete={view => remove(view).then(x => onChatDeleted(view))}
+                />
+            </ChatListContext.Provider>
         </>
     )
 }

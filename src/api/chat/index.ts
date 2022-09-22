@@ -1,31 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { RequestResult } from "api/common-api-types"
+import { ctxMenuChatListActions } from "api/slices/contextMenuChatList"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents, WSChatListEvents } from "common/websocket"
 import { ChatView, MessageDTO, MessageState } from "pages/chat/types"
-
-export const loadableSlice = createSlice({
-    name: "loadable",
-    initialState: [] as MessageDTO[],
-    reducers: {
-        load: (state, payload: PayloadAction<MessageDTO>) => {
-            state.push(payload.payload)
-        },
-        sendToServer: (state, payload: PayloadAction<MessageDTO>) => {
-            const index = state.findIndex(x => x.id === payload.payload.id)
-            if (index > -1) state[index].state = MessageState.SENDED_TO_SERVER
-        },
-        sendToUser: (state, payload: PayloadAction<MessageDTO>) => {
-            const index = state.findIndex(x => x.id === payload.payload.id)
-            if (index > -1) state.splice(index, 1)
-        },
-        onError: (state, payload: PayloadAction<MessageDTO>) => {
-            const index = state.findIndex(x => x.id === payload.payload.id)
-            if (index > -1) state[index].state = MessageState.ERROR
-        }
-    }
-})
 
 type DeleteQuery = {
     userId: string
@@ -62,11 +40,17 @@ export const chatApi = createApi({
                 url: `/api/chat/delete`,
                 body: queryBody,
                 method: "POST"
-            })
+            }),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    dispatch(ctxMenuChatListActions.loading({ loading: true, chatId: arg.chatId }))
+                    await queryFulfilled
+                } catch {}
+            }
         }),
         getChatList: build.query<RequestResult<ChatView[]>, string>({
             query: userId => `/api/chat/list/${userId}`,
-            async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData }) {
+            async onCacheEntryAdded(arg, { cacheDataLoaded, cacheEntryRemoved, updateCachedData, dispatch }) {
                 await cacheDataLoaded
                 WebSocketSignalR.socket?.on(WebSocketEvents.Receive, (message: MessageDTO, unit?: ChatView) => {
                     updateCachedData(d => {
@@ -110,8 +94,10 @@ export const chatApi = createApi({
                         if (!d.data) return
                         const c = d.data?.findIndex(x => x.chatId === chat.chatId)
                         if (c > -1) {
+                            dispatch(ctxMenuChatListActions.loading({ loading: false, chatId: chat.chatId }))
                             d.data?.splice(c, 1)
                         }
+                        dispatch(ctxMenuChatListActions.loading({ loading: false, chatId: "" }))
                     })
                 })
 
@@ -122,5 +108,3 @@ export const chatApi = createApi({
 })
 
 export const { useGetChatListQuery, useAddChatMutation, useDeleteChatMutation } = chatApi
-export const loadableSliceAction = loadableSlice.actions
-export const loadableSliceReducer = loadableSlice.reducer

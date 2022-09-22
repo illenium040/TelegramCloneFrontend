@@ -27,10 +27,27 @@
       focus:bg-sidebar-ico-focus focus:text-white
         cursor-pointer
         grid grid-cols-chat-list-unit-col grid-rows-chat-list-unit-row gap-2
-        p-4;
+        p-4 relative;
     }
 
     .chat-image {
         @apply w-[60px] h-[60px] rounded-full object-cover;
+    }
+
+    .chat-view-loading {
+        @apply absolute w-full h-[80px];
+    }
+
+    .chat-view-loading:after {
+        @apply dark:bg-dark-sidebar-bg;
+        content: "\A";
+        position: absolute;
+        width: 100%;
+        height: 80px;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+        transition: all 1s;
+        -webkit-transition: all 1s;
     }
 }

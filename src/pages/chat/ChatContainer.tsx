@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ChatWithUser from "./components/chat-with-user"
 import { useConnectQuery } from "api/signalR"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
@@ -13,6 +13,12 @@ const ChatContainer = () => {
     const { isLoading } = useConnectQuery(user.id)
     const [selectedChat, setSelectedChat] = useState<ChatView | null>(null)
     const [addChat, addChatState] = useAddChatMutation()
+
+    const escapeKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && selectedChat !== null) {
+            setSelectedChat(null)
+        }
+    }
 
     const onChatDeleted = (u: ChatView) => {
         if (u.chatId === selectedChat?.chatId) {
@@ -33,6 +39,13 @@ const ChatContainer = () => {
         }
         setSelectedChat(u)
     }
+
+    useEffect(() => {
+        document.addEventListener("keydown", escapeKeyDown)
+        return () => {
+            document.removeEventListener("keydown", escapeKeyDown)
+        }
+    }, [])
 
     if (isLoading) return <Loading />
     return (

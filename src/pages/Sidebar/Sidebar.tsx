@@ -57,7 +57,7 @@ export const Sidebar = () => {
     const ids = ["settings", "all-chats", "private", "edit"]
     return (
         <React.Fragment>
-            <aside className="z-50 dark:bg-dark-sidebar-bg  min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">
+            <aside className="z-40 dark:bg-dark-sidebar-bg  min-w-[80px] h-screen bg-sidebar" aria-label="Sidebar">
                 <div className="overflow-y-auto ">
                     <ul>
                         {icons.map((x, i) => (

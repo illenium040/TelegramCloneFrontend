@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
-import { loadableSliceAction } from "api/chat"
 import { RequestResult } from "api/common-api-types"
+import { loadableMessageAction } from "api/slices/loadableMessage"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatDTO, MessageDTO, MessageState } from "pages/chat/types"
@@ -45,12 +45,12 @@ export const signalRApi = createApi({
                 })
             },
             async onQueryStarted(message, { dispatch, queryFulfilled }) {
-                dispatch(loadableSliceAction.load(message))
+                dispatch(loadableMessageAction.load(message))
                 try {
                     const { data } = await queryFulfilled
-                    dispatch(loadableSliceAction.sendToServer(data))
+                    dispatch(loadableMessageAction.sendToServer(data))
                 } catch (err) {
-                    dispatch(loadableSliceAction.onError(message))
+                    dispatch(loadableMessageAction.onError(message))
                 }
             }
         }),
@@ -61,7 +61,7 @@ export const signalRApi = createApi({
                     await cacheDataLoaded
                     const onReceive = (message: MessageDTO) => {
                         if (message.chatId === arg.chatId) {
-                            dispatch(loadableSliceAction.sendToUser(message))
+                            dispatch(loadableMessageAction.sendToUser(message))
                             updateCachedData(draft => {
                                 draft.data?.messages.push(message)
                             })

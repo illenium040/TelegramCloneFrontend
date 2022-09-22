@@ -1,11 +1,20 @@
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
+import { useTypedSelector } from "api"
 import { getDateString } from "common/extensions/global-extensions"
+import { Loading } from "pages/Loading"
 import { ChatUserProps } from "./types"
 
 export const ChatUser = (props: ChatUserProps) => {
     const { unit, handleClick, chatType } = props
+    const { chatId, loading } = useTypedSelector(selector => selector.CtxChatListMenu)
+
     return (
-        <div id={unit.chatId} className={`group chat-user ${chatType}`} onClick={handleClick}>
+        <div id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
+            {chatId === unit.chatId && loading && (
+                <div className="chat-view-loading">
+                    <Loading />
+                </div>
+            )}
             <span className="row-span-2">
                 <img className="chat-image" src={unit.user.avatar ?? "/images/default-avatar.png"} alt="" />
             </span>
