@@ -1,5 +1,7 @@
 import { useLoginMutation } from "api/user"
 import { UserDTO } from "common/models/user-models"
+import { Loader } from "pages/Loaders"
+import { FullPageLoader } from "pages/Loaders/Loader"
 import { Navigate, useNavigate } from "react-router-dom"
 
 export const Login = () => {
@@ -30,6 +32,7 @@ export const Login = () => {
     }
     return (
         <main className="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white">
+            {loginState.isLoading && <FullPageLoader loaderWidth={64} />}
             <section className="flex w-[30rem] flex-col space-y-10">
                 <div className="text-center text-4xl font-medium">Log In</div>
 

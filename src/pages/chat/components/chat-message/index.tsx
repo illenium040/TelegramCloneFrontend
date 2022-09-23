@@ -1,7 +1,7 @@
 import "./chat-message.css"
 import { getDateString } from "common/extensions/global-extensions"
 import { UserDTO } from "common/models/user-models"
-import { Loading } from "pages/Loading"
+import { Loader } from "pages/Loaders"
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck"
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
 import { MessageDTO, MessageState } from "pages/chat/types"
@@ -25,7 +25,7 @@ const Message = (props: MessageProps) => {
                     <p>{message.content}</p>
                 </div>
                 <span className="text-default-gray ml-2 mt-2 self-end">{getDateString(message.created)}</span>
-                {isMyMessage && message.state === MessageState.LOADING && <Loading className="w-[16px] h-[16px]" />}
+                {isMyMessage && message.state === MessageState.LOADING && <Loader className="w-[16px] h-[16px]" />}
                 {isMyMessage && message.state === MessageState.SENDED_TO_SERVER && <BsCheck />}
                 {isMyMessage && message.state === MessageState.SENDED_TO_USER && <BsCheckAll />}
                 {isMyMessage && message.state === MessageState.READ && <BsCheckAll className="text-sky-500" />}

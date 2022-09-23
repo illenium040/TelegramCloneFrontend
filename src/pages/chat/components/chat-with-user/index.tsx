@@ -1,6 +1,6 @@
 import "./chat.css"
 import ChatHeader from "../chat-with-user-header"
-import { Loading } from "pages/Loading"
+import { Loader } from "pages/Loaders"
 import ChatFooter from "../chat-with-user-footer"
 import Message from "../chat-message"
 import { scrollBottom } from "common/extensions/global-extensions"
@@ -25,7 +25,7 @@ const ChatWithUser = (props: ChatProps) => {
         scrollBottom(".chat-body")
     })
 
-    if (messageQuery.isFetching) return <Loading />
+    if (messageQuery.isFetching) return <Loader loaderWidth={64} />
 
     return (
         <div className="chat">

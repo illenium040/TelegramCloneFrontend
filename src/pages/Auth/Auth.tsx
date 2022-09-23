@@ -1,6 +1,6 @@
 import { useIsValidMutation } from "api/user"
 import { UserDTO } from "common/models/user-models"
-import { Loading } from "pages/Loading"
+import { FullPageLoader } from "pages/Loaders/Loader"
 import { Navigate, Outlet } from "react-router-dom"
 import { AuthContext } from "./hooks/useAuth"
 
@@ -11,10 +11,10 @@ export const Auth = () => {
 
     if (validState.isUninitialized) {
         isValid()
-        return <Loading />
+        return <FullPageLoader loaderWidth={128} />
     }
 
-    if (validState.isLoading) return <Loading />
+    if (validState.isLoading) return <FullPageLoader loaderWidth={128} />
 
     if (user && succeeded)
         return (

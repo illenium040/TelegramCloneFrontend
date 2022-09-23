@@ -2,7 +2,7 @@ import ChatWithUser from "./components/chat-with-user"
 import { useConnectQuery } from "api/signalR"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import SidebarChatList from "./components/sidebar-chat-list"
-import { Loading } from "pages/Loading"
+import { Loader } from "pages/Loaders"
 import { ChatListContextMenu } from "pages/ContextMenu"
 import { ChatListContext } from "pages/ContextMenu/hooks/useContextMenu"
 import { ChatViewType } from "./components/sidebar-chat-list/components/ChatUser/types"
@@ -18,7 +18,7 @@ const ChatContainer = () => {
     const { isViewLoading, chatViews } = useChatList()
     const { onChatDeleted, onChatSelected, selectedChat } = useChatListCallbacks(user.id)
 
-    if (isLoading || isViewLoading) return <Loading />
+    if (isLoading || isViewLoading) return <Loader loaderWidth={64} />
     return (
         <>
             {chatViews && <SidebarChatList views={chatViews} onChatSelected={onChatSelected} />}

@@ -1,6 +1,6 @@
 import "./ChatSearch.css"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
-import { Loading } from "pages/Loading"
+import { Loader } from "pages/Loaders"
 import { useEffect, useRef } from "react"
 import { useSearch } from "../../hooks/useSearch"
 import { ChatSearchProps } from "./types"
@@ -29,7 +29,9 @@ export const ChatSearch = (props: ChatSearchProps) => {
                 placeholder="Поиск..."
                 type="text"
             />
-            {search.isFetching && <Loading className="w-[32px] h-[32px] ml-1" />}
+            {(search.isFetching || search.isLoading) && (
+                <Loader className="w-[32px] ml-1" loaderWidth={24} thickness={2} />
+            )}
         </div>
     )
 }

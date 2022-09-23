@@ -3,7 +3,7 @@ import { useAnimations } from "./hooks/useAnimations"
 import { ChatSearch } from "./components/ChatSearch"
 import { UserDTO } from "common/models/user-models"
 import { ChatUser } from "./components/ChatUser"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChatViewType } from "./components/ChatUser/types"
 import { ChatView } from "pages/chat/types"
 import { SidebarChatListProps } from "./types"
@@ -28,7 +28,11 @@ const SidebarChatList = (props: SidebarChatListProps) => {
             setMyChats(views)
             return
         }
-        const values = views.filter(view => view.user.name.toLowerCase().indexOf(value.toLocaleLowerCase()) >= 0)
+        const values = views.filter(
+            view =>
+                view.user.name.toLowerCase().indexOf(value.toLocaleLowerCase()) >= 0 &&
+                !view.chatId.startsWith("search")
+        )
         setMyChats(values)
     }
 
@@ -44,10 +48,24 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                 className="dark:bg-dark-chat-unit-bg dark:text-gray-200
                 group chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm">
                 <ChatSearch handleSearchInput={handleSearchInput} handleSearchData={handleSearchData} />
-
-                {myChats.map((x, i) => (
-                    <ChatUser chatType={ChatViewType.My} key={x.chatId} handleClick={handleChatUserClick} unit={x} />
-                ))}
+                {users.length === 0 &&
+                    views.map((x, i) => (
+                        <ChatUser
+                            chatType={ChatViewType.My}
+                            key={x.chatId}
+                            handleClick={handleChatUserClick}
+                            unit={x}
+                        />
+                    ))}
+                {users.length > 0 &&
+                    myChats.map((x, i) => (
+                        <ChatUser
+                            chatType={ChatViewType.My}
+                            key={x.chatId}
+                            handleClick={handleChatUserClick}
+                            unit={x}
+                        />
+                    ))}
                 {users.length > 0 && (
                     <div className="border-t-2 border-black">
                         {users.map((x, i) => (

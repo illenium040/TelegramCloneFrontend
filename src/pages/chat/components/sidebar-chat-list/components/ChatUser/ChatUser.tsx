@@ -1,7 +1,7 @@
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
 import { useTypedSelector } from "api"
 import { getDateString } from "common/extensions/global-extensions"
-import { Loading } from "pages/Loading"
+import { Loader } from "pages/Loaders"
 import { ChatUserProps } from "./types"
 
 export const ChatUser = (props: ChatUserProps) => {
@@ -12,7 +12,7 @@ export const ChatUser = (props: ChatUserProps) => {
         <div id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
             {chatId === unit.chatId && loading && (
                 <div className="chat-view-loading">
-                    <Loading />
+                    <Loader />
                 </div>
             )}
             <span className="row-span-2">
