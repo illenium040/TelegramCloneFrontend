@@ -45,7 +45,7 @@ const ChatWithUser = (props: ChatProps) => {
                     data: messages?.concat(loadableMessages),
                     elementClassName: "chat-message",
                     height: 265,
-                    width: 180
+                    width: 200
                 }}>
                 <MessageContextMenu />
             </MessageContext.Provider>

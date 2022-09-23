@@ -46,7 +46,7 @@ export const ChatListContextMenu = (props: ContextChatListMenuProps) => {
                     </li>
                     <li onClick={e => selectedView && onUnpin(selectedView)}>
                         <AiOutlinePushpin className="mr-5 w-[20px] h-[20px]" />
-                        <p>Открепить</p>
+                        <p>Закрепить</p>
                     </li>
                     <li onClick={e => selectedView && onTurnOnNotifications(selectedView)}>
                         <IoMdVolumeOff className="mr-5 w-[20px] h-[20px]" />

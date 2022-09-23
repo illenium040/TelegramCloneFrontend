@@ -3,17 +3,6 @@
 @tailwind utilities;
 
 @layer components {
-    .chat-list-search {
-        @apply p-2 w-full h-[45px];
-    }
-    .chat-list-search input {
-        @apply w-full rounded-md bg-gray-200 p-2
-        dark:dark:bg-dark-chat-unit-bg
-        dark:focus:bg-dark-sidebar-bg-lighter
-        focus:bg-white
-        focus:outline-sky-500;
-    }
-
     .chat-sidebar-list {
         @apply h-screen bg-white min-w-[250px] w-full max-w-[460px]
         overflow-auto;

@@ -1,30 +1,35 @@
 import "./sidebar-chat-list.css"
-import { useGetChatListQuery } from "api/chat"
 import { useAnimations } from "./hooks/useAnimations"
-import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { ChatSearch } from "./components/ChatSearch"
 import { UserDTO } from "common/models/user-models"
 import { ChatUser } from "./components/ChatUser"
 import { useState } from "react"
-import { Loading } from "pages/Loading"
-import { ContextChatListMenu } from "pages/ContextMenu"
 import { ChatViewType } from "./components/ChatUser/types"
 import { ChatView } from "pages/chat/types"
 import { SidebarChatListProps } from "./types"
-import { ChatListContext } from "pages/ContextMenu/hooks/useContextMenu"
-import { useContextMenuActions } from "./hooks/useContextMenuActions"
+import { useAuthContext } from "pages/Auth/hooks/useAuth"
 
 const SidebarChatList = (props: SidebarChatListProps) => {
+    const { onChatSelected, views } = props
     const user = useAuthContext()
-    const { onChatSelected, onChatDeleted } = props
-    const { addToFolder, archive, block, clearStory, markAsUnread, remove, turnOnNotifications, unpin } =
-        useContextMenuActions()
-    const { isFetching, data } = useGetChatListQuery(user.id)
     const { chatClick, chatListRef } = useAnimations()
     const [users, setUsers] = useState<UserDTO[]>([])
+    const [myChats, setMyChats] = useState<ChatView[]>(views)
 
     const handleSearchData = (users: UserDTO[]) => {
-        setUsers(users)
+        const filtered = users.filter(user => views.findIndex(view => view.user.id === user.id) === -1)
+        const myIndex = filtered.findIndex(x => x.id === user.id)
+        if (myIndex !== -1) filtered.splice(myIndex, 1)
+        setUsers(filtered)
+    }
+
+    const handleSearchInput = (value: string) => {
+        if (!value) {
+            setMyChats(views)
+            return
+        }
+        const values = views.filter(view => view.user.name.toLowerCase().indexOf(value.toLocaleLowerCase()) >= 0)
+        setMyChats(values)
     }
 
     const handleChatUserClick = (unit: ChatView) => {
@@ -38,10 +43,14 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                 ref={chatListRef}
                 className="dark:bg-dark-chat-unit-bg dark:text-gray-200
                 group chat-sidebar-list chat-scrollbar shadow-lg shadow-black container-sm">
-                <ChatSearch handleSearchData={handleSearchData} />
-                {users.length > 0 &&
-                    users.map((x, i) => {
-                        return (
+                <ChatSearch handleSearchInput={handleSearchInput} handleSearchData={handleSearchData} />
+
+                {myChats.map((x, i) => (
+                    <ChatUser chatType={ChatViewType.My} key={x.chatId} handleClick={handleChatUserClick} unit={x} />
+                ))}
+                {users.length > 0 && (
+                    <div className="border-t-2 border-black">
+                        {users.map((x, i) => (
                             <ChatUser
                                 chatType={ChatViewType.OnSearch}
                                 key={x.id}
@@ -53,33 +62,10 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                                     lastMessage: undefined
                                 }}
                             />
-                        )
-                    })}
-                {isFetching && <Loading />}
-                {data &&
-                    users.length === 0 &&
-                    data.data?.map((x, i) => (
-                        <ChatUser
-                            chatType={ChatViewType.My}
-                            key={x.chatId}
-                            handleClick={handleChatUserClick}
-                            unit={x}
-                        />
-                    ))}
+                        ))}
+                    </div>
+                )}
             </aside>
-            <ChatListContext.Provider
-                value={{ data: data?.data, elementClassName: ChatViewType.My, height: 300, width: 270 }}>
-                <ContextChatListMenu
-                    onArchive={archive}
-                    onAddToFolder={addToFolder}
-                    onBlock={block}
-                    onClearStory={clearStory}
-                    onMarkAsUnread={markAsUnread}
-                    onTurnOnNotifications={turnOnNotifications}
-                    onUnpin={unpin}
-                    onDelete={view => remove(view).then(x => onChatDeleted(view))}
-                />
-            </ChatListContext.Provider>
         </>
     )
 }

@@ -1,58 +1,41 @@
-import { useEffect, useState } from "react"
 import ChatWithUser from "./components/chat-with-user"
 import { useConnectQuery } from "api/signalR"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
-import { useAddChatMutation } from "api/chat"
-import WebSocketSignalR, { WSChatListEvents } from "common/websocket"
 import SidebarChatList from "./components/sidebar-chat-list"
-import { ChatView } from "./types"
 import { Loading } from "pages/Loading"
+import { ChatListContextMenu } from "pages/ContextMenu"
+import { ChatListContext } from "pages/ContextMenu/hooks/useContextMenu"
+import { ChatViewType } from "./components/sidebar-chat-list/components/ChatUser/types"
+import { useContextMenuActions } from "./components/sidebar-chat-list/hooks/useContextMenuActions"
+import { useChatList } from "./components/sidebar-chat-list/hooks/useChatList"
+import { useChatListCallbacks } from "./components/sidebar-chat-list/hooks/useChatListCallbacks"
 
 const ChatContainer = () => {
     const user = useAuthContext()
     const { isLoading } = useConnectQuery(user.id)
-    const [selectedChat, setSelectedChat] = useState<ChatView | null>(null)
-    const [addChat, addChatState] = useAddChatMutation()
+    const { addToFolder, archive, block, clearStory, markAsUnread, remove, turnOnNotifications, unpin } =
+        useContextMenuActions()
+    const { isViewLoading, chatViews } = useChatList()
+    const { onChatDeleted, onChatSelected, selectedChat } = useChatListCallbacks(user.id)
 
-    const escapeKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape" && selectedChat !== null) {
-            setSelectedChat(null)
-        }
-    }
-
-    const onChatDeleted = (u: ChatView) => {
-        if (u.chatId === selectedChat?.chatId) {
-            setSelectedChat(null)
-        }
-    }
-
-    const onChatSelected = async (u: ChatView) => {
-        if (u.chatId.startsWith("search_")) {
-            const result = await addChat({
-                userId: user.id,
-                withUserId: u.user.id
-            }).unwrap()
-            if (result.succeeded) {
-                u.chatId = result.data!
-                await WebSocketSignalR.socket?.send(WSChatListEvents.Add, u)
-            }
-        }
-        setSelectedChat(u)
-    }
-
-    useEffect(() => {
-        document.addEventListener("keydown", escapeKeyDown)
-        return () => {
-            document.removeEventListener("keydown", escapeKeyDown)
-        }
-    }, [])
-
-    if (isLoading) return <Loading />
+    if (isLoading || isViewLoading) return <Loading />
     return (
         <>
-            <SidebarChatList onChatSelected={onChatSelected} onChatDeleted={onChatDeleted} />
-            {addChatState.isLoading && <Loading />}
+            {chatViews && <SidebarChatList views={chatViews} onChatSelected={onChatSelected} />}
             {selectedChat && <ChatWithUser targetChat={selectedChat} />}
+            <ChatListContext.Provider
+                value={{ data: chatViews, elementClassName: ChatViewType.My, height: 300, width: 270 }}>
+                <ChatListContextMenu
+                    onArchive={archive}
+                    onAddToFolder={addToFolder}
+                    onBlock={block}
+                    onClearStory={clearStory}
+                    onMarkAsUnread={markAsUnread}
+                    onTurnOnNotifications={turnOnNotifications}
+                    onUnpin={unpin}
+                    onDelete={view => remove(view).then(x => onChatDeleted(view))}
+                />
+            </ChatListContext.Provider>
         </>
     )
 }

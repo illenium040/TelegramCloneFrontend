@@ -1,5 +1,7 @@
+import "./Auth.css"
 import { useRegisterMutation } from "api/user"
 import { useNavigate } from "react-router-dom"
+import { Loading } from "pages/Loading"
 
 export const Register = () => {
     const [register, registerState] = useRegisterMutation()
@@ -16,9 +18,14 @@ export const Register = () => {
             .unwrap()
             .then(result => console.log(result))
     }
-
+    if (registerState.isSuccess) setTimeout(() => navigate("/login"), 2000)
     return (
         <main className="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white">
+            {registerState.isLoading && (
+                <div className="auth-loading">
+                    <Loading />
+                </div>
+            )}
             <section className="flex w-[30rem] flex-col space-y-10">
                 <div className="text-center text-4xl font-medium">Register</div>
 
@@ -61,6 +68,8 @@ export const Register = () => {
                         Sign in
                     </a>
                 </p>
+                {/* TMP solution for this */}
+                {registerState.isSuccess && <p className="text-green-400"> Вы успешно зарегестрированы</p>}
             </section>
         </main>
     )
