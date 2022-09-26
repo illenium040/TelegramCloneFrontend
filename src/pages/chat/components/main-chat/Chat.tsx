@@ -12,29 +12,32 @@ import { MessageContextMenu } from "pages/ContextMenu/MessageContextMenu"
 import { ChatHeader } from "../chat-header"
 
 type ChatProps = {
-    targetChat: ChatView
+    view: ChatView
 }
 
 export const Chat = (props: ChatProps) => {
     const currentUser = useAuthContext()
-    const { targetChat } = props
-    const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, targetChat)
+    const { view } = props
+    const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, view)
     const messages = messageQuery.data?.data?.messages
 
     useEffect(() => {
         scrollBottom(".chat-body")
     })
 
-    if (messageQuery.isFetching) return <Loader loaderWidth={64} />
+    useEffect(() => {
+        console.log(view)
+    }, [view])
 
+    if (messageQuery.isFetching) return <Loader loaderWidth={64} />
     return (
         <div className="chat">
-            <ChatHeader userName={targetChat.user.name} />
+            <ChatHeader userName={view.user.name} />
             <div className="chat-body chat-scrollbar">
                 <div className="chat-body-scrollable">
                     <div className="flex flex-col items-start p-2 justify-end w-full">
                         {messages?.concat(loadableMessages).map((x, i) => (
-                            <Message key={x.id} message={x} userTo={targetChat.user} userFrom={currentUser} />
+                            <Message key={x.id} message={x} userTo={view.user} userFrom={currentUser} />
                         ))}
                     </div>
                 </div>

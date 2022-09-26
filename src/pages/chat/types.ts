@@ -11,6 +11,8 @@ export interface ChatView {
     chatId: string
     unreadMessagesCount: number
     lastMessage?: MessageDTO
+    chatToUser: ChatToUserDTO
+    loading?: boolean
 }
 
 export enum MessageState {
@@ -37,4 +39,24 @@ export interface MessageDTO {
     state: MessageState
     contentType: MessageContentType
     created: Date
+}
+
+export interface FolderDTO {
+    id: string
+    name: string
+    icon?: string
+    userId: string
+}
+
+export interface ChatToUserDTO {
+    id: string
+    userId: string
+    chatId: string
+    targetUserId: string
+    isPrivate?: boolean
+    isArchived?: boolean
+    IsNotified?: boolean
+    IsPinned?: boolean
+    IsBlocked?: boolean
+    folders?: FolderDTO[]
 }

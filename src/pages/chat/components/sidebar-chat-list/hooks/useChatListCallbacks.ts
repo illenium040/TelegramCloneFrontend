@@ -1,5 +1,4 @@
 import { useAddChatMutation } from "api/chat"
-import WebSocketSignalR, { WSChatListEvents } from "common/websocket"
 import { ChatView } from "pages/chat/types"
 import { useState } from "react"
 import { useFeatures } from "./useFeatures"
@@ -24,11 +23,12 @@ export const useChatListCallbacks = (userId: string) => {
             }).unwrap()
             if (result.succeeded) {
                 u.chatId = result.data!
-                await WebSocketSignalR.socket?.send(WSChatListEvents.Add, u)
             }
         }
         setSelectedChat(u)
     }
 
-    return { onChatDeleted, onChatSelected, selectedChat }
+    const onChatArchived = (view: ChatView) => {}
+
+    return { onChatDeleted, onChatSelected, onChatArchived, selectedChat }
 }

@@ -2,12 +2,13 @@ import "./sidebar-chat-list.css"
 import { useAnimations } from "./hooks/useAnimations"
 import { ChatSearch } from "./components/ChatSearch"
 import { UserDTO } from "common/models/user-models"
-import { ChatUser } from "./components/ChatUser"
+import { ChatViewComponent } from "./components/ChatViewComponent"
 import { useState } from "react"
-import { ChatViewType } from "./components/ChatUser/types"
+import { ChatViewType } from "./components/ChatViewComponent/types"
 import { ChatView } from "pages/chat/types"
 import { SidebarChatListProps } from "./types"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
+import { createEmptyChatView } from "common/extensions/dto-extensions"
 
 export const SidebarChatList = (props: SidebarChatListProps) => {
     const { onChatSelected, views } = props
@@ -50,7 +51,7 @@ export const SidebarChatList = (props: SidebarChatListProps) => {
                 <ChatSearch handleSearchInput={handleSearchInput} handleSearchData={handleSearchData} />
                 {users.length === 0 &&
                     views.map((x, i) => (
-                        <ChatUser
+                        <ChatViewComponent
                             chatType={ChatViewType.My}
                             key={x.chatId}
                             handleClick={handleChatUserClick}
@@ -58,31 +59,27 @@ export const SidebarChatList = (props: SidebarChatListProps) => {
                         />
                     ))}
                 {users.length > 0 &&
+                    myChats.length > 0 &&
                     myChats.map((x, i) => (
-                        <>
-                            <ChatUser
-                                chatType={ChatViewType.My}
-                                key={x.chatId}
-                                handleClick={handleChatUserClick}
-                                unit={x}
-                            />
-                            <div className="border-t-2 border-black">
-                                {users.map((x, i) => (
-                                    <ChatUser
-                                        chatType={ChatViewType.OnSearch}
-                                        key={x.id}
-                                        handleClick={handleChatUserClick}
-                                        unit={{
-                                            chatId: `search_${i}`,
-                                            unreadMessagesCount: 0,
-                                            user: x,
-                                            lastMessage: undefined
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        </>
+                        <ChatViewComponent
+                            chatType={ChatViewType.My}
+                            key={x.chatId}
+                            handleClick={handleChatUserClick}
+                            unit={x}
+                        />
                     ))}
+                {users.length > 0 && (
+                    <div className="border-t-2 border-black">
+                        {users.map((x, i) => (
+                            <ChatViewComponent
+                                chatType={ChatViewType.OnSearch}
+                                key={x.id}
+                                handleClick={handleChatUserClick}
+                                unit={createEmptyChatView(x, `search_${i}`)}
+                            />
+                        ))}
+                    </div>
+                )}
             </aside>
         </>
     )

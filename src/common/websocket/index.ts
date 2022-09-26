@@ -10,7 +10,8 @@ export enum WebSocketEvents {
 
 export enum WSChatListEvents {
     Add = "AddToChatList",
-    Delete = "DeleteFromChatList"
+    Delete = "DeleteFromChatList",
+    Archive = "Archive"
 }
 
 abstract class WebSocketSignalR {

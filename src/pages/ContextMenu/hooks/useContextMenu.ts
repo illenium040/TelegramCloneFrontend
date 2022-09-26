@@ -62,7 +62,7 @@ const useContextMenu = <T>(elementClassName: string, data: T, width: number, hei
         },
         [setShow, setAnchorPoint, show]
     )
-    const elements = useMemo(() => document.getElementsByClassName(elementClassName), [data])
+
     const handleClick = useCallback(
         (e: MouseEvent) => {
             e.stopPropagation()
@@ -99,10 +99,12 @@ const useContextMenu = <T>(elementClassName: string, data: T, width: number, hei
 
     useEffect(() => {
         document.addEventListener("click", handleClick)
-        for (const el of elements) (el as HTMLElement).addEventListener("contextmenu", handleContextMenu)
+        for (const el of document.getElementsByClassName(elementClassName))
+            (el as HTMLElement).addEventListener("contextmenu", handleContextMenu)
         return () => {
             document.removeEventListener("click", handleClick)
-            for (const el of elements) (el as HTMLElement).removeEventListener("contextmenu", handleContextMenu)
+            for (const el of document.getElementsByClassName(elementClassName))
+                (el as HTMLElement).removeEventListener("contextmenu", handleContextMenu)
         }
     })
     return { anchorPoint, show, selectedId, menuRef }

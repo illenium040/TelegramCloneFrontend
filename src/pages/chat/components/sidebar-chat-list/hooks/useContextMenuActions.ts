@@ -1,24 +1,22 @@
-import { useDeleteChatMutation } from "api/chat"
-import WebSocketSignalR, { WSChatListEvents } from "common/websocket"
+import { useArchiveChatMutation, useDeleteChatMutation } from "api/chat"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { ChatView } from "pages/chat/types"
 
 export const useContextMenuActions = () => {
     const user = useAuthContext()
     const [deleteChat] = useDeleteChatMutation()
-
+    const [archiveChat] = useArchiveChatMutation()
     const remove = (view: ChatView) => {
         return deleteChat({
             chatId: view.chatId,
             userId: user.id
-        })
-            .unwrap()
-            .then(x => {
-                WebSocketSignalR.socket?.send(WSChatListEvents.Delete, view)
-            })
+        }).unwrap()
     }
-    const archive = () => {
-        console.log("Archived")
+    const archive = (view: ChatView) => {
+        return archiveChat({
+            chatId: view.chatId,
+            userId: user.id
+        }).unwrap()
     }
     const addToFolder = () => {
         console.log("Added to folder")

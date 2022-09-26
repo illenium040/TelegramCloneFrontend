@@ -1,11 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { RequestResult } from "api/common-api-types"
-import { ctxMenuChatListActions } from "api/slices/contextMenuChatList"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents, WSChatListEvents } from "common/websocket"
 import { ChatView, MessageDTO, MessageState } from "pages/chat/types"
 
-type DeleteQuery = {
+type ChatQuery = {
     userId: string
     chatId: string
 }
@@ -35,7 +34,7 @@ export const chatApi = createApi({
                 method: "POST"
             })
         }),
-        deleteChat: build.mutation<RequestResult<string>, DeleteQuery>({
+        deleteChat: build.mutation<RequestResult<string>, ChatQuery>({
             query: queryBody => ({
                 url: `/api/chat/delete`,
                 body: queryBody,
@@ -43,8 +42,55 @@ export const chatApi = createApi({
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(ctxMenuChatListActions.loading({ loading: true, chatId: arg.chatId }))
+                    dispatch(
+                        chatApi.util.updateQueryData("getChatList", arg.userId, draft => {
+                            if (!draft.data) return
+                            const c = draft.data?.find(x => x.chatId === arg.chatId)
+                            if (c) {
+                                c.loading = true
+                            }
+                        })
+                    )
                     await queryFulfilled
+                    dispatch(
+                        chatApi.util.updateQueryData("getChatList", arg.userId, d => {
+                            if (!d.data) return
+                            const c = d.data?.findIndex(x => x.chatId === arg.chatId)
+                            if (c > -1) {
+                                d.data?.splice(c, 1)
+                            }
+                        })
+                    )
+                } catch {}
+            }
+        }),
+        archiveChat: build.mutation<RequestResult<boolean>, ChatQuery>({
+            query: queryBody => ({
+                url: `/api/chat/archive?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
+                method: "POST"
+            }),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    dispatch(
+                        chatApi.util.updateQueryData("getChatList", arg.userId, draft => {
+                            if (!draft.data) return
+                            const c = draft.data?.find(x => x.chatId === arg.chatId)
+                            if (c) {
+                                c.loading = true
+                            }
+                        })
+                    )
+                    const is = await queryFulfilled
+                    dispatch(
+                        chatApi.util.updateQueryData("getChatList", arg.userId, draft => {
+                            if (!draft.data) return
+                            const c = draft.data?.find(x => x.chatId === arg.chatId)
+                            if (c) {
+                                c.chatToUser.isArchived = is.data.data
+                                c.loading = false
+                            }
+                        })
+                    )
                 } catch {}
             }
         }),
@@ -68,6 +114,7 @@ export const chatApi = createApi({
                         }
                     })
                 })
+
                 WebSocketSignalR.socket?.on(
                     WebSocketEvents.Read,
                     (messagesIds: string[], chatId: string, targetUserId: string) => {
@@ -81,30 +128,10 @@ export const chatApi = createApi({
                     }
                 )
 
-                WebSocketSignalR.socket?.on(WSChatListEvents.Add, (chat: ChatView) => {
-                    updateCachedData(d => {
-                        const c = d.data?.findIndex(x => x.chatId === chat.chatId)
-                        if (c && c === -1) {
-                            d.data?.push(chat)
-                        }
-                    })
-                })
-                WebSocketSignalR.socket?.on(WSChatListEvents.Delete, (chat: ChatView) => {
-                    updateCachedData(d => {
-                        if (!d.data) return
-                        const c = d.data?.findIndex(x => x.chatId === chat.chatId)
-                        if (c > -1) {
-                            dispatch(ctxMenuChatListActions.loading({ loading: false, chatId: chat.chatId }))
-                            d.data?.splice(c, 1)
-                        }
-                        dispatch(ctxMenuChatListActions.loading({ loading: false, chatId: "" }))
-                    })
-                })
-
                 await cacheEntryRemoved
             }
         })
     })
 })
 
-export const { useGetChatListQuery, useAddChatMutation, useDeleteChatMutation } = chatApi
+export const { useGetChatListQuery, useAddChatMutation, useDeleteChatMutation, useArchiveChatMutation } = chatApi

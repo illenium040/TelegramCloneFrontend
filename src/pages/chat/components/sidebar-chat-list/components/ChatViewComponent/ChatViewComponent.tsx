@@ -1,16 +1,13 @@
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
-import { useTypedSelector } from "api"
 import { getDateString } from "common/extensions/global-extensions"
 import { Loader } from "pages/Loaders"
-import { ChatUserProps } from "./types"
+import { ChatViewProps } from "./types"
 
-export const ChatUser = (props: ChatUserProps) => {
+export const ChatViewComponent = (props: ChatViewProps) => {
     const { unit, handleClick, chatType } = props
-    const { chatId, loading } = useTypedSelector(selector => selector.CtxChatListMenu)
-
     return (
         <div id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
-            {chatId === unit.chatId && loading && (
+            {unit.loading && (
                 <div className="chat-view-loading">
                     <Loader />
                 </div>
@@ -39,6 +36,7 @@ export const ChatUser = (props: ChatUserProps) => {
                     </p>
                 </span>
             )}
+            {unit.chatToUser.isArchived && <span>ARCHIVED</span>}
         </div>
     )
 }

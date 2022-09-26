@@ -6,5 +6,6 @@ export const useChatList = () => {
     const chatViewQuery = useGetChatListQuery(user.id)
     const isViewLoading = chatViewQuery.isLoading || chatViewQuery.isFetching
     const chatViews = chatViewQuery.data?.data
+
     return { isViewLoading, chatViews }
 }

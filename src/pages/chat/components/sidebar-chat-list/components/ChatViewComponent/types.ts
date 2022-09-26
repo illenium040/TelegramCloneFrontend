@@ -1,6 +1,6 @@
 import { ChatView } from "pages/chat/types"
 
-export type ChatUserProps = {
+export type ChatViewProps = {
     unit: ChatView
     chatType: ChatViewType
     handleClick: (view: ChatView) => void
