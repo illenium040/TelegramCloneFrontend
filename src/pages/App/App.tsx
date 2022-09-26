@@ -1,9 +1,9 @@
 import { Sidebar } from "pages/Sidebar"
-import ChatContainer from "../chat"
-import "./index.css"
+import { ChatContainer } from "../chat"
+import "./App.css"
 import "./scrollbar.css"
 
-const App = () => {
+export const App = () => {
     return (
         <div className="app">
             <div className="sidebar-container">
@@ -13,5 +13,3 @@ const App = () => {
         </div>
     )
 }
-
-export default App

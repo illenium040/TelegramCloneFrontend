@@ -11,7 +11,7 @@ export type MessageProps = {
     userTo: UserDTO
 }
 
-const Message = (props: MessageProps) => {
+export const Message = (props: MessageProps) => {
     const { message, userFrom, userTo } = props
     const isMyMessage = message.userIdFrom === userFrom.id
     const me = isMyMessage ? userFrom : userTo
@@ -33,5 +33,3 @@ const Message = (props: MessageProps) => {
         </div>
     )
 }
-
-export default Message

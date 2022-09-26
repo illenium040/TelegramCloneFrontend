@@ -3,13 +3,13 @@ import { useAnimations } from "./hooks/useAnimations"
 import { ChatSearch } from "./components/ChatSearch"
 import { UserDTO } from "common/models/user-models"
 import { ChatUser } from "./components/ChatUser"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { ChatViewType } from "./components/ChatUser/types"
 import { ChatView } from "pages/chat/types"
 import { SidebarChatListProps } from "./types"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 
-const SidebarChatList = (props: SidebarChatListProps) => {
+export const SidebarChatList = (props: SidebarChatListProps) => {
     const { onChatSelected, views } = props
     const user = useAuthContext()
     const { chatClick, chatListRef } = useAnimations()
@@ -59,33 +59,31 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                     ))}
                 {users.length > 0 &&
                     myChats.map((x, i) => (
-                        <ChatUser
-                            chatType={ChatViewType.My}
-                            key={x.chatId}
-                            handleClick={handleChatUserClick}
-                            unit={x}
-                        />
-                    ))}
-                {users.length > 0 && (
-                    <div className="border-t-2 border-black">
-                        {users.map((x, i) => (
+                        <>
                             <ChatUser
-                                chatType={ChatViewType.OnSearch}
-                                key={x.id}
+                                chatType={ChatViewType.My}
+                                key={x.chatId}
                                 handleClick={handleChatUserClick}
-                                unit={{
-                                    chatId: `search_${i}`,
-                                    unreadMessagesCount: 0,
-                                    user: x,
-                                    lastMessage: undefined
-                                }}
+                                unit={x}
                             />
-                        ))}
-                    </div>
-                )}
+                            <div className="border-t-2 border-black">
+                                {users.map((x, i) => (
+                                    <ChatUser
+                                        chatType={ChatViewType.OnSearch}
+                                        key={x.id}
+                                        handleClick={handleChatUserClick}
+                                        unit={{
+                                            chatId: `search_${i}`,
+                                            unreadMessagesCount: 0,
+                                            user: x,
+                                            lastMessage: undefined
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    ))}
             </aside>
         </>
     )
 }
-
-export default SidebarChatList

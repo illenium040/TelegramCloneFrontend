@@ -1,8 +1,7 @@
 import "./chat.css"
-import ChatHeader from "../chat-with-user-header"
 import { Loader } from "pages/Loaders"
-import ChatFooter from "../chat-with-user-footer"
-import Message from "../chat-message"
+import { ChatFooter } from "../chat-footer"
+import { Message } from "../chat-message"
 import { scrollBottom } from "common/extensions/global-extensions"
 import { useMessaging } from "./hooks/useMessaging"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
@@ -10,12 +9,13 @@ import { ChatView } from "pages/chat/types"
 import { useEffect } from "react"
 import { MessageContext } from "pages/ContextMenu/hooks/useContextMenu"
 import { MessageContextMenu } from "pages/ContextMenu/MessageContextMenu"
+import { ChatHeader } from "../chat-header"
 
 type ChatProps = {
     targetChat: ChatView
 }
 
-const ChatWithUser = (props: ChatProps) => {
+export const Chat = (props: ChatProps) => {
     const currentUser = useAuthContext()
     const { targetChat } = props
     const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, targetChat)
@@ -52,5 +52,3 @@ const ChatWithUser = (props: ChatProps) => {
         </div>
     )
 }
-
-export default ChatWithUser

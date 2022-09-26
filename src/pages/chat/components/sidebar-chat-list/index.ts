@@ -1,2 +1,1 @@
-import SidebarChatList from "./SidebarChatList"
-export default SidebarChatList
+export { SidebarChatList } from "./SidebarChatList"
