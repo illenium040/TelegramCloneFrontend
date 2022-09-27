@@ -1,62 +1,47 @@
 import anime from "animejs"
 import { ChatView, MessageDTO } from "pages/chat/types"
 import { useEffect, useCallback, useState, createContext, useContext, useMemo, useRef } from "react"
-
 export type MenuContext<T> = {
     elementClassName: string
     data: T | undefined
-    width: number
-    height: number
 }
 
 export const ChatListContext = createContext<MenuContext<ChatView[]>>({
     data: undefined,
-    elementClassName: "",
-    height: 300,
-    width: 270
+    elementClassName: ""
 })
 
 export const MessageContext = createContext<MenuContext<MessageDTO[]>>({
     data: undefined,
-    elementClassName: "",
-    height: 265,
-    width: 180
+    elementClassName: ""
 })
 
 export const useChatListCtxMenu = () => {
-    const { data, elementClassName, height, width } = useContext(ChatListContext)
-    const { anchorPoint, selectedId, show, menuRef } = useContextMenu(elementClassName, data, width, height)
+    const { data, elementClassName } = useContext(ChatListContext)
+    const { selectedId, show, menuRef } = useContextMenu(elementClassName)
     const selectedView = useMemo(() => data?.find(x => x.chatId === selectedId), [selectedId, data])
 
-    return { anchorPoint, show, selectedView, menuRef }
+    return { show, selectedView, menuRef }
 }
 
 export const useMessageCtxMenu = () => {
-    const { data, elementClassName, height, width } = useContext(MessageContext)
-    const { anchorPoint, selectedId, show, menuRef } = useContextMenu(elementClassName, data, width, height)
+    const { data, elementClassName } = useContext(MessageContext)
+    const { selectedId, show, menuRef } = useContextMenu(elementClassName)
     const selectedMessage = useMemo(() => data?.find(x => x.id === selectedId), [selectedId, data])
 
-    return { anchorPoint, show, selectedMessage, menuRef }
+    return { show, selectedMessage, menuRef }
 }
 
-const useContextMenu = <T>(elementClassName: string, data: T, width: number, height: number) => {
+const useContextMenu = (elementClassName: string) => {
     const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
     const [show, setShow] = useState(false)
     const [selectedId, setSelectedId] = useState("")
-
+    const menuRef = useRef<HTMLUListElement>(null)
     const handleContextMenu = useCallback(
         (event: MouseEvent) => {
             event.preventDefault()
             if (show) return
-            const x =
-                window.innerWidth - event.pageX < width
-                    ? window.innerWidth - width - (window.innerWidth - event.pageX)
-                    : event.pageX
-            const y =
-                window.innerHeight - event.pageY < height
-                    ? window.innerHeight - height - (window.innerHeight - event.pageY)
-                    : event.pageY
-            setAnchorPoint({ x: x, y: y })
+            setAnchorPoint({ x: event.pageX, y: event.pageY })
             setShow(true)
             setSelectedId((event.currentTarget as HTMLElement).id)
         },
@@ -71,23 +56,42 @@ const useContextMenu = <T>(elementClassName: string, data: T, width: number, hei
         [show]
     )
 
-    const menuRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
+        if (!show) return
+        const height = menuRef.current?.clientHeight!
+        const width = menuRef.current?.clientWidth!
+        const x =
+            window.innerWidth - anchorPoint.x < width
+                ? window.innerWidth - width - (window.innerWidth - anchorPoint.x)
+                : anchorPoint.x
+        const y =
+            window.innerHeight - anchorPoint.y < height
+                ? window.innerHeight - height - (window.innerHeight - anchorPoint.y)
+                : anchorPoint.y
+
         anime({
-            targets: menuRef.current?.firstChild,
+            targets: menuRef.current,
             width: {
-                value: width,
+                value: [0, width],
                 duration: 100,
                 easing: "easeInSine"
             },
             height: {
-                value: height,
+                value: [0, height],
                 duration: 100,
                 easing: "easeInSine"
+            },
+            top: {
+                value: y,
+                duration: 0
+            },
+            left: {
+                value: x,
+                duration: 0
             }
         })
         anime({
-            targets: menuRef.current?.firstChild!.childNodes,
+            targets: menuRef.current?.childNodes,
             opacity: {
                 value: 100,
                 delay: 100,
@@ -107,5 +111,5 @@ const useContextMenu = <T>(elementClassName: string, data: T, width: number, hei
                 (el as HTMLElement).removeEventListener("contextmenu", handleContextMenu)
         }
     })
-    return { anchorPoint, show, selectedId, menuRef }
+    return { show, selectedId, menuRef }
 }

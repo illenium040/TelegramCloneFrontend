@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
-import WebSocketSignalR, { WebSocketEvents, WSChatListEvents } from "common/websocket"
+import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatView, MessageDTO, MessageState } from "pages/chat/types"
 
 type ChatQuery = {
@@ -12,6 +12,16 @@ type ChatQuery = {
 type CreateQuery = {
     userId: string
     withUserId: string
+}
+
+const updateQueryData = (query: ChatQuery, action: (view: ChatView, data?: ChatView[], index?: number) => void) => {
+    return chatApi.util.updateQueryData("getChatList", query.userId, d => {
+        if (!d.data) return
+        const c = d.data?.findIndex(x => x.chatId === query.chatId)
+        if (c > -1) {
+            action(d.data[c], d.data, c)
+        }
+    })
 }
 
 export const chatApi = createApi({
@@ -42,25 +52,9 @@ export const chatApi = createApi({
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(
-                        chatApi.util.updateQueryData("getChatList", arg.userId, draft => {
-                            if (!draft.data) return
-                            const c = draft.data?.find(x => x.chatId === arg.chatId)
-                            if (c) {
-                                c.loading = true
-                            }
-                        })
-                    )
+                    dispatch(updateQueryData(arg, view => (view.loading = true)))
                     await queryFulfilled
-                    dispatch(
-                        chatApi.util.updateQueryData("getChatList", arg.userId, d => {
-                            if (!d.data) return
-                            const c = d.data?.findIndex(x => x.chatId === arg.chatId)
-                            if (c > -1) {
-                                d.data?.splice(c, 1)
-                            }
-                        })
-                    )
+                    dispatch(updateQueryData(arg, (view, data, index) => data?.splice(index!, 1)))
                 } catch {}
             }
         }),
@@ -71,24 +65,66 @@ export const chatApi = createApi({
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(
-                        chatApi.util.updateQueryData("getChatList", arg.userId, draft => {
-                            if (!draft.data) return
-                            const c = draft.data?.find(x => x.chatId === arg.chatId)
-                            if (c) {
-                                c.loading = true
-                            }
-                        })
-                    )
+                    dispatch(updateQueryData(arg, view => (view.loading = true)))
                     const is = await queryFulfilled
                     dispatch(
-                        chatApi.util.updateQueryData("getChatList", arg.userId, draft => {
-                            if (!draft.data) return
-                            const c = draft.data?.find(x => x.chatId === arg.chatId)
-                            if (c) {
-                                c.chatToUser.isArchived = is.data.data
-                                c.loading = false
-                            }
+                        updateQueryData(arg, view => {
+                            view.chatToUser.isArchived = is.data.data
+                            view.loading = false
+                        })
+                    )
+                } catch {}
+            }
+        }),
+        togglePin: build.mutation<RequestResult<boolean>, ChatQuery>({
+            query: queryBody => ({
+                url: `/api/chat/togglePin?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
+                method: "POST"
+            }),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    const is = await queryFulfilled
+                    dispatch(
+                        updateQueryData(arg, view => {
+                            view.chatToUser.IsPinned = is.data.data
+                            view.loading = false
+                        })
+                    )
+                } catch {}
+            }
+        }),
+        toggleNotifications: build.mutation<RequestResult<boolean>, ChatQuery>({
+            query: queryBody => ({
+                url: `/api/chat/toggleNotifications?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
+                method: "POST"
+            }),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    const is = await queryFulfilled
+                    dispatch(
+                        updateQueryData(arg, view => {
+                            view.chatToUser.IsNotified = is.data.data
+                            view.loading = false
+                        })
+                    )
+                } catch {}
+            }
+        }),
+        block: build.mutation<RequestResult<boolean>, ChatQuery>({
+            query: queryBody => ({
+                url: `/api/chat/block?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
+                method: "POST"
+            }),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    const is = await queryFulfilled
+                    dispatch(
+                        updateQueryData(arg, view => {
+                            view.chatToUser.IsBlocked = is.data.data
+                            view.loading = false
                         })
                     )
                 } catch {}
@@ -134,4 +170,12 @@ export const chatApi = createApi({
     })
 })
 
-export const { useGetChatListQuery, useAddChatMutation, useDeleteChatMutation, useArchiveChatMutation } = chatApi
+export const {
+    useGetChatListQuery,
+    useAddChatMutation,
+    useDeleteChatMutation,
+    useArchiveChatMutation,
+    useTogglePinMutation,
+    useToggleNotificationsMutation,
+    useBlockMutation
+} = chatApi

@@ -17,12 +17,12 @@ export const useChatListCallbacks = (userId: string) => {
 
     const onChatSelected = async (u: ChatView) => {
         if (u.chatId.startsWith("search_")) {
-            const result = await addChat({
+            const { result, data } = await addChat({
                 userId: userId,
                 withUserId: u.user.id
             }).unwrap()
             if (result.succeeded) {
-                u.chatId = result.data!
+                u.chatId = data!
             }
         }
         setSelectedChat(u)

@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { RequestResult } from "api/common-api-types"
-import { loadableMessageAction } from "api/slices/loadableMessage"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatDTO, MessageDTO, MessageState } from "pages/chat/types"
@@ -14,6 +13,18 @@ type QueryRead = {
     messagesId: string[]
     chatId: string
     userFromId: string
+}
+
+const updateQueyCash = (message: MessageDTO, action: (message: MessageDTO) => void) => {
+    const args = { userId: message.userIdFrom, chatId: message.chatId } as QueryInput
+    return signalRApi.util.updateQueryData("getChatMessages", args, d => {
+        const msg = d.data?.messages.find(x => x.id === message.id)
+        if (msg) action(msg)
+        else {
+            d.data?.messages.push(message)
+            action(message)
+        }
+    })
 }
 
 export const signalRApi = createApi({
@@ -40,17 +51,20 @@ export const signalRApi = createApi({
         sendMessage: builder.mutation<MessageDTO, MessageDTO>({
             queryFn: (message: MessageDTO) => {
                 return new Promise(async resolve => {
-                    await WebSocketSignalR.socket?.send(WebSocketEvents.Send, message)
+                    if (message.userIdFrom === message.userIdTo) {
+                        await WebSocketSignalR.socket?.invoke(WebSocketEvents.SendToMe, message)
+                    } else {
+                        await WebSocketSignalR.socket?.invoke(WebSocketEvents.Send, message)
+                    }
                     resolve({ data: message })
                 })
             },
             async onQueryStarted(message, { dispatch, queryFulfilled }) {
-                dispatch(loadableMessageAction.load(message))
+                dispatch(updateQueyCash(message, msg => (msg.state = MessageState.LOADING)))
                 try {
                     const { data } = await queryFulfilled
-                    dispatch(loadableMessageAction.sendToServer(data))
                 } catch (err) {
-                    dispatch(loadableMessageAction.onError(message))
+                    dispatch(updateQueyCash(message, msg => (msg.state = MessageState.ERROR)))
                 }
             }
         }),
@@ -61,10 +75,7 @@ export const signalRApi = createApi({
                     await cacheDataLoaded
                     const onReceive = (message: MessageDTO) => {
                         if (message.chatId === arg.chatId) {
-                            dispatch(loadableMessageAction.sendToUser(message))
-                            updateCachedData(draft => {
-                                draft.data?.messages.push(message)
-                            })
+                            dispatch(updateQueyCash(message, msg => (msg.state = message.state)))
                         }
                     }
                     const onRead = (messagesId: string[], chatId: string, targetUserId: string) => {
@@ -78,12 +89,16 @@ export const signalRApi = createApi({
                             })
                         }
                     }
-
+                    const onReceiveFromMe = (message: MessageDTO) => {
+                        dispatch(updateQueyCash(message, msg => (msg.state = message.state)))
+                    }
                     WebSocketSignalR.socket?.on(WebSocketEvents.Receive, onReceive)
                     WebSocketSignalR.socket?.on(WebSocketEvents.Read, onRead)
+                    WebSocketSignalR.socket?.on(WebSocketEvents.SendToMe, onReceiveFromMe)
                     await cacheEntryRemoved
                     WebSocketSignalR.socket?.off(WebSocketEvents.Receive, onReceive)
                     WebSocketSignalR.socket?.off(WebSocketEvents.Read, onRead)
+                    WebSocketSignalR.socket?.off(WebSocketEvents.SendToMe, onReceiveFromMe)
                 } catch {}
             }
         }),

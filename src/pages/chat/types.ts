@@ -17,7 +17,6 @@ export interface ChatView {
 
 export enum MessageState {
     LOADING,
-    SENDED_TO_SERVER,
     SENDED_TO_USER,
     READ,
     ERROR

@@ -18,16 +18,12 @@ type ChatProps = {
 export const Chat = (props: ChatProps) => {
     const currentUser = useAuthContext()
     const { view } = props
-    const { loadableMessages, messageQuery, submitMessage } = useMessaging(currentUser, view)
+    const { messageQuery, submitMessage } = useMessaging(currentUser, view)
     const messages = messageQuery.data?.data?.messages
 
     useEffect(() => {
         scrollBottom(".chat-body")
     })
-
-    useEffect(() => {
-        console.log(view)
-    }, [view])
 
     if (messageQuery.isFetching) return <Loader loaderWidth={64} />
     return (
@@ -36,7 +32,7 @@ export const Chat = (props: ChatProps) => {
             <div className="chat-body chat-scrollbar">
                 <div className="chat-body-scrollable">
                     <div className="flex flex-col items-start p-2 justify-end w-full">
-                        {messages?.concat(loadableMessages).map((x, i) => (
+                        {messages?.map((x, i) => (
                             <Message key={x.id} message={x} userTo={view.user} userFrom={currentUser} />
                         ))}
                     </div>
@@ -45,10 +41,8 @@ export const Chat = (props: ChatProps) => {
             <ChatFooter onMessageSubmit={submitMessage} />
             <MessageContext.Provider
                 value={{
-                    data: messages?.concat(loadableMessages),
-                    elementClassName: "chat-message",
-                    height: 265,
-                    width: 200
+                    data: messages,
+                    elementClassName: "chat-message"
                 }}>
                 <MessageContextMenu />
             </MessageContext.Provider>

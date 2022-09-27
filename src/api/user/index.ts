@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { RequestResult } from "api/common-api-types"
+import { CommandResult, RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
 import { UserDTO, UserLoggedIn } from "common/models/user-models"
 
@@ -17,7 +17,7 @@ export const userApi = createApi({
     reducerPath: "userAPI",
     baseQuery: fetchBaseQuery({
         baseUrl: serverHost,
-        prepareHeaders: (headers, { getState }) => {
+        prepareHeaders: headers => {
             const token = localStorage.getItem("token")
             if (token) {
                 headers.set("authorization", `Bearer ${token}`)
@@ -29,7 +29,7 @@ export const userApi = createApi({
         getUserByName: build.query<UserLoggedIn, string>({
             query: (userName: string) => `/api/user/${userName}`
         }),
-        isValid: build.mutation<RequestResult, void>({
+        isValid: build.mutation<CommandResult, void>({
             query: () => ({
                 url: "api/user/validate",
                 method: "POST"

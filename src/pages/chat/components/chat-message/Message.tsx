@@ -25,9 +25,10 @@ export const Message = (props: MessageProps) => {
                     <p>{message.content}</p>
                 </div>
                 <span className="text-default-gray ml-2 mt-2 self-end">{getDateString(message.created)}</span>
-                {isMyMessage && message.state === MessageState.LOADING && <Loader className="w-[16px] h-[16px]" />}
-                {isMyMessage && message.state === MessageState.SENDED_TO_SERVER && <BsCheck />}
-                {isMyMessage && message.state === MessageState.SENDED_TO_USER && <BsCheckAll />}
+                {isMyMessage && message.state === MessageState.LOADING && (
+                    <Loader loaderWidth={10} thickness={1} className="w-[16px] h-[16px] ml-2" />
+                )}
+                {isMyMessage && message.state === MessageState.SENDED_TO_USER && <BsCheck className="text-sky-500" />}
                 {isMyMessage && message.state === MessageState.READ && <BsCheckAll className="text-sky-500" />}
             </div>
         </div>

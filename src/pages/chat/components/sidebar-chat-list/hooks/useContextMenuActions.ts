@@ -1,4 +1,10 @@
-import { useArchiveChatMutation, useDeleteChatMutation } from "api/chat"
+import {
+    useArchiveChatMutation,
+    useBlockMutation,
+    useDeleteChatMutation,
+    useToggleNotificationsMutation,
+    useTogglePinMutation
+} from "api/chat"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { ChatView } from "pages/chat/types"
 
@@ -6,6 +12,10 @@ export const useContextMenuActions = () => {
     const user = useAuthContext()
     const [deleteChat] = useDeleteChatMutation()
     const [archiveChat] = useArchiveChatMutation()
+    const [togglePin] = useTogglePinMutation()
+    const [toggleBlock] = useBlockMutation()
+    const [toggleNotifications] = useToggleNotificationsMutation()
+
     const remove = (view: ChatView) => {
         return deleteChat({
             chatId: view.chatId,
@@ -21,8 +31,11 @@ export const useContextMenuActions = () => {
     const addToFolder = () => {
         console.log("Added to folder")
     }
-    const block = () => {
-        console.log("Blocked")
+    const block = (view: ChatView) => {
+        return toggleBlock({
+            chatId: view.chatId,
+            userId: user.id
+        }).unwrap()
     }
     const clearStory = () => {
         console.log("Story is cleared")
@@ -30,12 +43,18 @@ export const useContextMenuActions = () => {
     const markAsUnread = () => {
         console.log("Marked as unread")
     }
-    const turnOnNotifications = () => {
-        console.log("Notifications are turned on")
+    const notification = (view: ChatView) => {
+        return toggleNotifications({
+            chatId: view.chatId,
+            userId: user.id
+        }).unwrap()
     }
-    const unpin = () => {
-        console.log("Unpinned")
+    const unpin = (view: ChatView) => {
+        return togglePin({
+            chatId: view.chatId,
+            userId: user.id
+        }).unwrap()
     }
 
-    return { remove, archive, addToFolder, block, clearStory, markAsUnread, turnOnNotifications, unpin }
+    return { remove, archive, addToFolder, block, clearStory, markAsUnread, notification, unpin }
 }

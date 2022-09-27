@@ -3,14 +3,12 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 import thunk from "redux-thunk"
 import { chatApi } from "./chat"
 import { signalRApi } from "./signalR"
-import { loadableMessageSlice, loadableMessageReducer } from "./slices/loadableMessage"
 import { userApi } from "./user"
 
 const rootReducer = combineReducers({
     [userApi.reducerPath]: userApi.reducer,
     [chatApi.reducerPath]: chatApi.reducer,
-    [signalRApi.reducerPath]: signalRApi.reducer,
-    [loadableMessageSlice.name]: loadableMessageReducer
+    [signalRApi.reducerPath]: signalRApi.reducer
 })
 
 const apiMiddlewares = [userApi.middleware, chatApi.middleware, signalRApi.middleware, thunk]

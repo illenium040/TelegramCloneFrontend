@@ -9,12 +9,11 @@ import { ChatViewType } from "./components/sidebar-chat-list/components/ChatView
 import { useContextMenuActions } from "./components/sidebar-chat-list/hooks/useContextMenuActions"
 import { useChatList } from "./components/sidebar-chat-list/hooks/useChatList"
 import { useChatListCallbacks } from "./components/sidebar-chat-list/hooks/useChatListCallbacks"
-import { ChatView } from "./types"
 
 export const ChatContainer = () => {
     const user = useAuthContext()
     const { isLoading } = useConnectQuery(user.id)
-    const { addToFolder, archive, block, clearStory, markAsUnread, remove, turnOnNotifications, unpin } =
+    const { addToFolder, archive, block, clearStory, markAsUnread, remove, notification, unpin } =
         useContextMenuActions()
     const { isViewLoading, chatViews } = useChatList()
     const { onChatDeleted, onChatSelected, onChatArchived, selectedChat } = useChatListCallbacks(user.id)
@@ -24,15 +23,14 @@ export const ChatContainer = () => {
         <>
             {chatViews && <SidebarChatList views={chatViews} onChatSelected={onChatSelected} />}
             {selectedChat && <Chat view={selectedChat} />}
-            <ChatListContext.Provider
-                value={{ data: chatViews, elementClassName: ChatViewType.My, height: 300, width: 270 }}>
+            <ChatListContext.Provider value={{ data: chatViews, elementClassName: ChatViewType.My }}>
                 <ChatListContextMenu
                     onArchive={view => archive(view).then(x => onChatArchived(view))}
                     onAddToFolder={addToFolder}
                     onBlock={block}
                     onClearStory={clearStory}
                     onMarkAsUnread={markAsUnread}
-                    onTurnOnNotifications={turnOnNotifications}
+                    onTurnOnNotifications={notification}
                     onUnpin={unpin}
                     onDelete={view => remove(view).then(x => onChatDeleted(view))}
                 />

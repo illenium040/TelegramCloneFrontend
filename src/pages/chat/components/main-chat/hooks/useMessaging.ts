@@ -1,16 +1,15 @@
-import { useTypedSelector } from "api"
 import { useGetChatMessagesQuery, useReadMessageMutation, useSendMessageMutation } from "api/signalR"
 import { UserDTO } from "common/models/user-models"
 import { ChatView, MessageContentType, MessageState } from "pages/chat/types"
-import { useEffect, useMemo } from "react"
+import { useEffect } from "react"
 import { v4 } from "uuid"
 
 export const useMessaging = (currentUser: UserDTO, targetChat: ChatView) => {
     const messageQuery = useGetChatMessagesQuery({ chatId: targetChat.chatId, userId: currentUser.id })
     const [sendMessage, sendState] = useSendMessageMutation()
     const [readMessage, readState] = useReadMessageMutation()
-    const loadable = useTypedSelector(state => state.loadable)
-    const loadableMessages = useMemo(() => loadable.filter(x => x.chatId === targetChat.chatId), [loadable])
+    //const loadable = useTypedSelector(state => state.loadable)
+    //const loadableMessages = useMemo(() => loadable.filter(x => x.chatId === targetChat.chatId), [loadable])
 
     useEffect(() => {
         if (messageQuery.isSuccess && !sendState.isLoading) {
@@ -42,5 +41,5 @@ export const useMessaging = (currentUser: UserDTO, targetChat: ChatView) => {
             contentType: MessageContentType.Text
         })
     }
-    return { submitMessage, messageQuery, loadableMessages }
+    return { submitMessage, messageQuery }
 }

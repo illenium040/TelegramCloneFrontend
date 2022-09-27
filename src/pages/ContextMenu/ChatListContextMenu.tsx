@@ -1,7 +1,5 @@
 import "./ContextMenu.css"
-import { useEffect, useRef } from "react"
 import { useChatListCtxMenu } from "./hooks/useContextMenu"
-import anime from "animejs"
 import { BiArchiveIn } from "@react-icons/all-files/bi/BiArchiveIn"
 import { AiOutlinePushpin } from "@react-icons/all-files/ai/AiOutlinePushpin"
 import { IoMdVolumeOff } from "@react-icons/all-files/io/IoMdVolumeOff"
@@ -34,27 +32,28 @@ export const ChatListContextMenu = (props: ContextChatListMenuProps) => {
         onTurnOnNotifications,
         onUnpin
     } = props
-    const { anchorPoint, show, selectedView, menuRef } = useChatListCtxMenu()
+    const { show, selectedView, menuRef } = useChatListCtxMenu()
 
-    if (show) {
+    if (show && selectedView) {
+        const { isArchived, IsBlocked, IsNotified, IsPinned } = selectedView?.chatToUser
         return (
-            <div ref={menuRef} className="menu-container" id="menu-container">
-                <ul className="menu" style={{ top: anchorPoint.y, left: anchorPoint.x }}>
+            <div className="menu-container" id="menu-container">
+                <ul ref={menuRef} className="menu">
                     <li onClick={e => selectedView && onArchive(selectedView)}>
                         <BiArchiveIn className="mr-5 w-[20px] h-[20px]" />
-                        <p>Архивировать</p>
+                        <p>{isArchived ? "Разархивировать" : "Архивировать"}</p>
                     </li>
                     <li onClick={e => selectedView && onUnpin(selectedView)}>
                         <AiOutlinePushpin className="mr-5 w-[20px] h-[20px]" />
-                        <p>Закрепить</p>
+                        <p>{IsPinned ? "Открепить" : "Закрепить"}</p>
                     </li>
                     <li onClick={e => selectedView && onTurnOnNotifications(selectedView)}>
                         <IoMdVolumeOff className="mr-5 w-[20px] h-[20px]" />
-                        <p>Выключить уведомления</p>
+                        <span>{IsNotified ? "Выключить уведомления" : "Включить уведомления"}</span>
                     </li>
                     <li onClick={e => selectedView && onMarkAsUnread(selectedView)}>
                         <FiMessageCircle className="mr-5 w-[20px] h-[20px]" />
-                        <p>Пометить как непрочитанное</p>
+                        <span>Пометить как непрочитанное</span>
                     </li>
                     <li onClick={e => selectedView && onAddToFolder(selectedView)}>
                         <BsFillFolderSymlinkFill className="mr-5 w-[20px] h-[20px]" />
@@ -62,7 +61,7 @@ export const ChatListContextMenu = (props: ContextChatListMenuProps) => {
                     </li>
                     <li onClick={e => selectedView && onBlock(selectedView)}>
                         <IoHandRight className="mr-5 w-[20px] h-[20px]" />
-                        <p>Заблокировать</p>
+                        <p>{IsBlocked ? "Разблокировать" : "Заблокировать"}</p>
                     </li>
                     <li onClick={e => selectedView && onClearStory(selectedView)}>
                         <GiBroom className="mr-5 w-[20px] h-[20px]" />

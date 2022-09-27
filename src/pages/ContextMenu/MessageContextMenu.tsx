@@ -9,12 +9,12 @@ import { FiTrash } from "@react-icons/all-files/fi/FiTrash"
 import { IoIosCheckmarkCircleOutline } from "@react-icons/all-files/io/IoIosCheckmarkCircleOutline"
 export const MessageContextMenu = () => {
     const user = useAuthContext()
-    const { anchorPoint, show, selectedMessage, menuRef } = useMessageCtxMenu()
+    const { show, selectedMessage, menuRef } = useMessageCtxMenu()
 
     if (show) {
         return (
-            <div ref={menuRef} className="menu-container" id="menu-container">
-                <ul className="menu" style={{ top: anchorPoint.y, left: anchorPoint.x }}>
+            <div className="menu-container" id="menu-container">
+                <ul ref={menuRef} className="menu">
                     <li>
                         <BsArrowReturnLeft className="flipV mr-5 w-[20px] h-[20px]" />
                         <p>Ответить</p>

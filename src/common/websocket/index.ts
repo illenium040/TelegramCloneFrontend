@@ -2,6 +2,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from "@micros
 import { serverHost } from "common/constants"
 
 export enum WebSocketEvents {
+    SendToMe = "SendToMe",
     Send = "SendMessage",
     Receive = "ReceiveMessage",
     SetHub = "SetUserHub",
