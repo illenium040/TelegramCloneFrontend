@@ -15,6 +15,6 @@
       cursor-pointer;
     }
     .sidebar-ico {
-        @apply w-8 h-8 text-sidebar-ico group-focus:text-sidebar-ico-focus;
+        @apply w-8 h-8 text-sidebar-ico group-focus:text-sidebar-ico-focus block;
     }
 }
