@@ -1,4 +1,4 @@
-import "./Sidebar.css"
+import "./sidebar.css"
 import { BsFillChatFill } from "@react-icons/all-files/bs/BsFillChatFill"
 import { BsJustify } from "@react-icons/all-files/bs/BsJustify"
 import { BsFolder } from "@react-icons/all-files/bs/BsFolder"
