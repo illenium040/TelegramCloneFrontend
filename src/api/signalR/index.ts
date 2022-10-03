@@ -1,37 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
-import { RequestResult } from "api/common-api-types"
+import { decreaseUnreadMessageCounter, updateMessagesCash } from "api/cashActions"
+import { QueryInput, QueryRead, RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
-import { ChatDTO, MessageDTO, MessageState } from "pages/chat/types"
-
-type QueryInput = {
-    userId: string
-    chatId: string
-}
-
-type QueryRead = {
-    messagesId: string[]
-    chatId: string
-    userFromId: string
-}
-
-const updateQueyCash = (message: MessageDTO, action: (message: MessageDTO) => void) => {
-    const args = { userId: message.userIdFrom, chatId: message.chatId } as QueryInput
-    return signalRApi.util.updateQueryData("getChatMessages", args, d => {
-        const msg = d.data?.messages.find(x => x.id === message.id)
-        if (msg) action(msg)
-        else {
-            d.data?.messages.push(message)
-            action(message)
-        }
-    })
-}
+import { ChatDTO, ChatView, MessageDTO, MessageState } from "pages/chat/types"
 
 export const signalRApi = createApi({
     reducerPath: "signalRApi",
     baseQuery: fetchBaseQuery({
         baseUrl: serverHost,
-        prepareHeaders: (headers, { getState }) => {
+        prepareHeaders: headers => {
             const token = localStorage.getItem("token")
             if (token) {
                 headers.set("authorization", `Bearer ${token}`)
@@ -60,11 +38,11 @@ export const signalRApi = createApi({
                 })
             },
             async onQueryStarted(message, { dispatch, queryFulfilled }) {
-                dispatch(updateQueyCash(message, msg => (msg.state = MessageState.LOADING)))
+                dispatch(updateMessagesCash(message, msg => (msg.state = MessageState.LOADING)))
                 try {
                     const { data } = await queryFulfilled
                 } catch (err) {
-                    dispatch(updateQueyCash(message, msg => (msg.state = MessageState.ERROR)))
+                    dispatch(updateMessagesCash(message, msg => (msg.state = MessageState.ERROR)))
                 }
             }
         }),
@@ -73,24 +51,33 @@ export const signalRApi = createApi({
             async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved, dispatch }) {
                 try {
                     await cacheDataLoaded
-                    const onReceive = (message: MessageDTO) => {
+                    const onReceive = (message: MessageDTO, unit?: ChatView) => {
                         if (message.chatId === arg.chatId) {
-                            dispatch(updateQueyCash(message, msg => (msg.state = message.state)))
+                            if (message.userIdFrom !== arg.userId) {
+                                updateCachedData(d => {
+                                    d.data?.messages.push(message)
+                                })
+                            } else {
+                                dispatch(updateMessagesCash(message, msg => (msg.state = message.state)))
+                            }
                         }
                     }
                     const onRead = (messagesId: string[], chatId: string, targetUserId: string) => {
                         if (arg.chatId === chatId) {
                             updateCachedData(draft => {
+                                let count = 0
                                 for (let id of messagesId) {
                                     let m = draft.data?.messages.find(x => x.id === id)
                                     if (!m) continue
                                     m.state = MessageState.READ
+                                    count++
                                 }
+                                dispatch(decreaseUnreadMessageCounter(arg.userId, arg.chatId, targetUserId, count))
                             })
                         }
                     }
                     const onReceiveFromMe = (message: MessageDTO) => {
-                        dispatch(updateQueyCash(message, msg => (msg.state = message.state)))
+                        dispatch(updateMessagesCash(message, msg => (msg.state = message.state)))
                     }
                     WebSocketSignalR.socket?.on(WebSocketEvents.Receive, onReceive)
                     WebSocketSignalR.socket?.on(WebSocketEvents.Read, onRead)

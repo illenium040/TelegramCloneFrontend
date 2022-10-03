@@ -1,1 +1,0 @@
-export { SidebarChatList } from "./SidebarChatList"

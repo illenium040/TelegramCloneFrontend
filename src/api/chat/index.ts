@@ -1,34 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
-import { RequestResult } from "api/common-api-types"
+import { updateChatListData } from "api/cashActions"
+import { CreateQuery, QueryInput, RequestResult } from "api/common-api-types"
 import { serverHost } from "common/constants"
 import WebSocketSignalR, { WebSocketEvents } from "common/websocket"
 import { ChatView, MessageDTO, MessageState } from "pages/chat/types"
-
-type ChatQuery = {
-    userId: string
-    chatId: string
-}
-
-type CreateQuery = {
-    userId: string
-    withUserId: string
-}
-
-const updateQueryData = (query: ChatQuery, action: (view: ChatView, data?: ChatView[], index?: number) => void) => {
-    return chatApi.util.updateQueryData("getChatList", query.userId, d => {
-        if (!d.data) return
-        const c = d.data?.findIndex(x => x.chatId === query.chatId)
-        if (c > -1) {
-            action(d.data[c], d.data, c)
-        }
-    })
-}
 
 export const chatApi = createApi({
     reducerPath: "chatAPI",
     baseQuery: fetchBaseQuery({
         baseUrl: serverHost,
-        prepareHeaders: (headers, { getState }) => {
+        prepareHeaders: async headers => {
             const token = localStorage.getItem("token")
             if (token) {
                 headers.set("authorization", `Bearer ${token}`)
@@ -44,7 +25,7 @@ export const chatApi = createApi({
                 method: "POST"
             })
         }),
-        deleteChat: build.mutation<RequestResult<string>, ChatQuery>({
+        deleteChat: build.mutation<RequestResult<string>, QueryInput>({
             query: queryBody => ({
                 url: `/api/chat/delete`,
                 body: queryBody,
@@ -52,23 +33,23 @@ export const chatApi = createApi({
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    dispatch(updateChatListData(arg, view => (view.loading = true)))
                     await queryFulfilled
-                    dispatch(updateQueryData(arg, (view, data, index) => data?.splice(index!, 1)))
+                    dispatch(updateChatListData(arg, (view, data, index) => data?.splice(index!, 1)))
                 } catch {}
             }
         }),
-        archiveChat: build.mutation<RequestResult<boolean>, ChatQuery>({
+        archiveChat: build.mutation<RequestResult<boolean>, QueryInput>({
             query: queryBody => ({
                 url: `/api/chat/archive?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
                 method: "POST"
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    dispatch(updateChatListData(arg, view => (view.loading = true)))
                     const is = await queryFulfilled
                     dispatch(
-                        updateQueryData(arg, view => {
+                        updateChatListData(arg, view => {
                             view.chatToUser.isArchived = is.data.data
                             view.loading = false
                         })
@@ -76,54 +57,54 @@ export const chatApi = createApi({
                 } catch {}
             }
         }),
-        togglePin: build.mutation<RequestResult<boolean>, ChatQuery>({
+        togglePin: build.mutation<RequestResult<boolean>, QueryInput>({
             query: queryBody => ({
                 url: `/api/chat/togglePin?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
                 method: "POST"
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    dispatch(updateChatListData(arg, view => (view.loading = true)))
                     const is = await queryFulfilled
                     dispatch(
-                        updateQueryData(arg, view => {
-                            view.chatToUser.IsPinned = is.data.data
+                        updateChatListData(arg, view => {
+                            view.chatToUser.isPinned = is.data.data
                             view.loading = false
                         })
                     )
                 } catch {}
             }
         }),
-        toggleNotifications: build.mutation<RequestResult<boolean>, ChatQuery>({
+        toggleNotifications: build.mutation<RequestResult<boolean>, QueryInput>({
             query: queryBody => ({
                 url: `/api/chat/toggleNotifications?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
                 method: "POST"
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    dispatch(updateChatListData(arg, view => (view.loading = true)))
                     const is = await queryFulfilled
                     dispatch(
-                        updateQueryData(arg, view => {
-                            view.chatToUser.IsNotified = is.data.data
+                        updateChatListData(arg, view => {
+                            view.chatToUser.isNotified = is.data.data
                             view.loading = false
                         })
                     )
                 } catch {}
             }
         }),
-        block: build.mutation<RequestResult<boolean>, ChatQuery>({
+        block: build.mutation<RequestResult<boolean>, QueryInput>({
             query: queryBody => ({
                 url: `/api/chat/block?userId=${queryBody.userId}&chatId=${queryBody.chatId}`,
                 method: "POST"
             }),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(updateQueryData(arg, view => (view.loading = true)))
+                    dispatch(updateChatListData(arg, view => (view.loading = true)))
                     const is = await queryFulfilled
                     dispatch(
-                        updateQueryData(arg, view => {
-                            view.chatToUser.IsBlocked = is.data.data
+                        updateChatListData(arg, view => {
+                            view.chatToUser.isBlocked = is.data.data
                             view.loading = false
                         })
                     )
@@ -150,19 +131,6 @@ export const chatApi = createApi({
                         }
                     })
                 })
-
-                WebSocketSignalR.socket?.on(
-                    WebSocketEvents.Read,
-                    (messagesIds: string[], chatId: string, targetUserId: string) => {
-                        updateCachedData(d => {
-                            if (!d.data) return
-                            const curChat = d.data.find(x => x.chatId === chatId)
-                            if (curChat) {
-                                if (targetUserId === curChat.user.id) curChat.unreadMessagesCount -= messagesIds.length
-                            }
-                        })
-                    }
-                )
 
                 await cacheEntryRemoved
             }

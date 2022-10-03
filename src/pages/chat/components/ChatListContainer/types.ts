@@ -1,6 +1,6 @@
 import { ChatView } from "pages/chat/types"
 
-export type SidebarChatListProps = {
+export type ChatListContainerProps = {
     views: ChatView[]
     onChatSelected: (chat: ChatView) => void
 }

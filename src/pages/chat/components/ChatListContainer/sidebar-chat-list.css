@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .chat-sidebar-list {
+        @apply h-screen bg-white min-w-[250px] w-full max-w-[460px]
+        overflow-auto;
+    }
+
+    .chat-user {
+        @apply hover:bg-side-chat-hover min-w-full
+        dark:hover:bg-dark-chat-unit-hover
+        dark:focus:bg-dark-chat-unit-focus
+        min-h-[80px] max-h-[80px]
+      focus:bg-sidebar-ico-focus focus:text-white
+        cursor-pointer
+        grid grid-cols-chat-list-unit-col grid-rows-chat-list-unit-row gap-2
+        p-4 relative;
+    }
+
+    .chat-image {
+        @apply w-[60px] h-[60px] rounded-full object-cover;
+    }
+
+    .chat-view-loading {
+        @apply absolute w-full h-[80px];
+    }
+
+    .chat-view-loading:after {
+        @apply dark:bg-dark-sidebar-bg;
+        content: "\A";
+        position: absolute;
+        width: 100%;
+        height: 80px;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+        transition: all 1s;
+        -webkit-transition: all 1s;
+    }
+    .chat-list-search {
+        @apply p-2 w-full h-[45px] flex;
+    }
+    .chat-list-search input {
+        @apply w-full rounded-md bg-gray-200 p-2
+            dark:dark:bg-dark-chat-unit-bg
+            dark:focus:bg-dark-sidebar-bg-lighter
+            focus:bg-white
+            focus:outline-sky-500;
+    }
+
+    .menu-container {
+        @apply top-0 left-0 w-full h-full absolute z-50;
+    }
+    .menu {
+        @apply relative bg-dark-chat-unit-bg w-max h-min rounded-lg pt-[10px] pb-[10px]
+        dark:text-gray-200
+        shadow-xl
+        overflow-auto
+        overflow-y-hidden
+        overflow-x-hidden
+        shadow-black;
+    }
+    .menu li {
+        @apply p-2 pl-5 pr-5 cursor-pointer flex items-center opacity-0 whitespace-nowrap;
+    }
+
+    .menu li:hover {
+        @apply dark:bg-dark-sidebar-bg-lighter;
+    }
+    .flipH {
+        -moz-transform: scale(-1, 1);
+        -webkit-transform: scale(-1, 1);
+        -o-transform: scale(-1, 1);
+        -ms-transform: scale(-1, 1);
+        transform: scale(-1, 1);
+    }
+
+    .flipV {
+        -moz-transform: scale(1, -1);
+        -webkit-transform: scale(1, -1);
+        -o-transform: scale(1, -1);
+        -ms-transform: scale(1, -1);
+        transform: scale(1, -1);
+    }
+}

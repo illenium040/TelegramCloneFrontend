@@ -49,12 +49,12 @@ export const useContextMenuActions = () => {
             userId: user.id
         }).unwrap()
     }
-    const unpin = (view: ChatView) => {
+    const pin = (view: ChatView) => {
         return togglePin({
             chatId: view.chatId,
             userId: user.id
         }).unwrap()
     }
 
-    return { remove, archive, addToFolder, block, clearStory, markAsUnread, notification, unpin }
+    return { remove, archive, addToFolder, block, clearStory, markAsUnread, notification, pin }
 }
