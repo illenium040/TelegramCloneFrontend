@@ -1,14 +1,20 @@
-.sidebar-container {
-    @apply grid grid-cols-side-container;
-}
-.sidebar-ref {
-    @apply h-20 flex justify-center items-center text-base font-normal
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .sidebar-container {
+        @apply grid grid-cols-side-container;
+    }
+    .sidebar-ref {
+        @apply h-20 flex justify-center items-center text-base font-normal
      dark:hover:bg-gray-700 
      flex-col text-sidebar-ico
      focus:bg-sidebar-focus
      focus:text-sidebar-ico-focus
       cursor-pointer;
-}
-.sidebar-ico {
-    @apply w-8 h-8 text-sidebar-ico group-focus:text-sidebar-ico-focus;
+    }
+    .sidebar-ico {
+        @apply w-8 h-8 text-sidebar-ico group-focus:text-sidebar-ico-focus;
+    }
 }
