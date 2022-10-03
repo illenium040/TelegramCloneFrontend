@@ -156,10 +156,10 @@ export const ChatList = (props: { handleClick: (view: ChatView) => void; views: 
     return (
         <>
             {pinnedViews.map((x, i) => (
-                <>
+                <div key={i}>
                     <ChatViewComponent chatType={ChatViewType.My} key={x.chatId} handleClick={handleClick} unit={x} />
-                    <ContextMenu key={i} view={x} isFavorite={x.user.id === user.id} />
-                </>
+                    <ContextMenu key={x.user.id} view={x} isFavorite={x.user.id === user.id} />
+                </div>
             ))}
         </>
     )
