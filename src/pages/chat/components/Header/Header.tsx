@@ -4,7 +4,7 @@ import { BsThreeDotsVertical } from "@react-icons/all-files/bs/BsThreeDotsVertic
 import "./chat-header.css"
 import { UserDTO } from "common/models/user-models"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
-export const ChatHeader = (props: { user: UserDTO }) => {
+export const Header = (props: { user: UserDTO }) => {
     const curUser = useAuthContext()
     const { user } = props
     return (

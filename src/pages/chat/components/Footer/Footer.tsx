@@ -5,7 +5,7 @@ type ChatFooterProps = {
     onMessageSubmit: (msg: string) => void
 }
 
-export const ChatFooter = (props: ChatFooterProps) => {
+export const Footer = (props: ChatFooterProps) => {
     const { onMessageSubmit } = props
     let message = ""
     const onEnterKeyDown = (e: React.KeyboardEvent) => {
@@ -29,5 +29,3 @@ export const ChatFooter = (props: ChatFooterProps) => {
         </div>
     )
 }
-
-export default ChatFooter
