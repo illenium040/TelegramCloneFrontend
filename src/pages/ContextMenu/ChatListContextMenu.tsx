@@ -35,7 +35,7 @@ export const ChatListContextMenu = (props: ContextChatListMenuProps) => {
     const { show, selectedView, menuRef } = useChatListCtxMenu()
 
     if (show && selectedView) {
-        const { isArchived, IsBlocked, IsNotified, IsPinned } = selectedView?.chatToUser
+        const { isArchived, isBlocked, isNotified, isPinned } = selectedView?.chatToUser
         return (
             <div className="menu-container" id="menu-container">
                 <ul ref={menuRef} className="menu">
@@ -45,11 +45,11 @@ export const ChatListContextMenu = (props: ContextChatListMenuProps) => {
                     </li>
                     <li onClick={e => selectedView && onUnpin(selectedView)}>
                         <AiOutlinePushpin className="mr-5 w-[20px] h-[20px]" />
-                        <p>{IsPinned ? "Открепить" : "Закрепить"}</p>
+                        <p>{isPinned ? "Открепить" : "Закрепить"}</p>
                     </li>
                     <li onClick={e => selectedView && onTurnOnNotifications(selectedView)}>
                         <IoMdVolumeOff className="mr-5 w-[20px] h-[20px]" />
-                        <span>{IsNotified ? "Выключить уведомления" : "Включить уведомления"}</span>
+                        <span>{isNotified ? "Выключить уведомления" : "Включить уведомления"}</span>
                     </li>
                     <li onClick={e => selectedView && onMarkAsUnread(selectedView)}>
                         <FiMessageCircle className="mr-5 w-[20px] h-[20px]" />
@@ -61,7 +61,7 @@ export const ChatListContextMenu = (props: ContextChatListMenuProps) => {
                     </li>
                     <li onClick={e => selectedView && onBlock(selectedView)}>
                         <IoHandRight className="mr-5 w-[20px] h-[20px]" />
-                        <p>{IsBlocked ? "Разблокировать" : "Заблокировать"}</p>
+                        <p>{isBlocked ? "Разблокировать" : "Заблокировать"}</p>
                     </li>
                     <li onClick={e => selectedView && onClearStory(selectedView)}>
                         <GiBroom className="mr-5 w-[20px] h-[20px]" />

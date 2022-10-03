@@ -54,8 +54,8 @@ export interface ChatToUserDTO {
     targetUserId: string
     isPrivate?: boolean
     isArchived?: boolean
-    IsNotified?: boolean
-    IsPinned?: boolean
-    IsBlocked?: boolean
+    isNotified?: boolean
+    isPinned?: boolean
+    isBlocked?: boolean
     folders?: FolderDTO[]
 }

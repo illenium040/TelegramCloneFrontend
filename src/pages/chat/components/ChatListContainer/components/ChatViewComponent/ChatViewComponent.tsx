@@ -1,15 +1,21 @@
+import { AiOutlinePushpin } from "@react-icons/all-files/ai/AiOutlinePushpin"
 import { BsCheckAll } from "@react-icons/all-files/bs/BsCheckAll"
 import { getDateString } from "common/extensions/global-extensions"
 import { useAuthContext } from "pages/Auth/hooks/useAuth"
 import { Loader } from "pages/Loaders"
+import { useRef } from "react"
 import { ChatViewProps } from "./types"
 
 export const ChatViewComponent = (props: ChatViewProps) => {
     const { unit, handleClick, chatType } = props
     const user = useAuthContext()
-    if (unit.user.id === user.id)
+    const ref = useRef<HTMLDivElement>(null)
+
+    const isFavorite = unit.user.id === user.id
+
+    if (isFavorite)
         return (
-            <div id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
+            <div ref={ref} id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
                 {unit.loading && (
                     <div className="chat-view-loading">
                         <Loader />
@@ -34,11 +40,16 @@ export const ChatViewComponent = (props: ChatViewProps) => {
                         </div>
                     </span>
                 )}
+                {unit.chatToUser.isPinned && (
+                    <span className="flex justify-end items-start rounded-xl min-w-min text-gray-400">
+                        <AiOutlinePushpin className="text-right w-[16px] h-[16px]" />
+                    </span>
+                )}
             </div>
         )
 
     return (
-        <div id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
+        <div ref={ref} id={unit.chatId} className={`group chat-user ${chatType}`} onClick={() => handleClick(unit)}>
             {unit.loading && (
                 <div className="chat-view-loading">
                     <Loader />
@@ -68,6 +79,12 @@ export const ChatViewComponent = (props: ChatViewProps) => {
                     </p>
                 </span>
             )}
+            {unit.unreadMessagesCount === 0 && unit.chatToUser.isPinned && (
+                <span className="flex justify-end items-start rounded-xl min-w-min text-gray-400">
+                    <AiOutlinePushpin className="text-right w-[16px] h-[16px]" />
+                </span>
+            )}
+
             {unit.chatToUser.isArchived && <span>ARCHIVED</span>}
         </div>
     )

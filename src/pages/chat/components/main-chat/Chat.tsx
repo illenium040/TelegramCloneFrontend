@@ -28,7 +28,7 @@ export const Chat = (props: ChatProps) => {
     if (messageQuery.isFetching) return <Loader loaderWidth={64} />
     return (
         <div className="chat">
-            <ChatHeader userName={view.user.name} />
+            <ChatHeader user={view.user} />
             <div className="chat-body chat-scrollbar">
                 <div className="chat-body-scrollable">
                     <div className="flex flex-col items-start p-2 justify-end w-full">

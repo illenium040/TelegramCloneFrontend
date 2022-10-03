@@ -1,7 +1,9 @@
 export const getDateString = (dbDate?: Date) => {
     if (!dbDate) return ""
     var date = new Date(dbDate)
-    return `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`
+    var mm = date.getMonth() + 1 // getMonth() is zero-based
+    var dd = date.getDate()
+    return `${(dd > 9 ? "" : "0") + dd}.${(mm > 9 ? "" : "0") + mm}.${date.getFullYear()}`
 }
 
 export const getTime = (date?: Date) => {
